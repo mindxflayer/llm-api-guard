@@ -1,5 +1,6 @@
 import os
 import sys
+import yaml
 import inspect
 import logging
 import importlib.util
@@ -67,12 +68,56 @@ class PluginLoader:
 
         return plugins
 
+def load_config(path: str) -> dict:
+    if not os.path.exists(path):
+        raise ValueError(f"Config file not found at: {path}")
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            data = yaml.safe_load(f)
+    except Exception as e:
+        raise ValueError(f"Failed to parse config YAML: {e}")
+
+    if not isinstance(data, dict):
+        raise ValueError("Invalid config structure: must be a dict")
+
+    if "severity_threshold" not in data:
+        raise ValueError("Missing required key: severity_threshold")
+    if data["severity_threshold"] not in ("low", "medium", "high", "critical"):
+        raise ValueError(f"Invalid severity_threshold: {data['severity_threshold']}")
+
+    if "checks" not in data:
+        raise ValueError("Missing required key: checks")
+    if not isinstance(data["checks"], dict):
+        raise ValueError("checks must be a dictionary")
+
+    for k, v in data["checks"].items():
+        if not isinstance(v, bool):
+            raise ValueError(f"Check status for {k} must be boolean")
+
+    return data
+
+def filter_findings_by_severity(findings: list[Finding], threshold: str) -> list[Finding]:
+    severities = {"low": 1, "medium": 2, "high": 3, "critical": 4}
+    threshold_val = severities.get(threshold.lower(), 1)
+    
+    filtered = []
+    for f in findings:
+        f_sev = severities.get(f.severity.lower(), 1)
+        if f_sev >= threshold_val:
+            filtered.append(f)
+    return filtered
+
 class Runner:
-    def __init__(self, plugins: list):
+    def __init__(self, plugins: list, config: dict = None):
         self.plugins = plugins
+        self.config = config
 
     def run(self, target: str) -> list[Finding]:
         all_findings = []
+        checks = None
+        if self.config:
+            checks = self.config.get("checks", {})
+
         for plugin_item in self.plugins:
             plugin_instance = None
             try:
@@ -85,6 +130,10 @@ class Runner:
                     continue
 
                 plugin_name = getattr(plugin_instance, "name", plugin_instance.__class__.__name__)
+                if checks is not None:
+                    if plugin_name not in checks or not checks[plugin_name]:
+                        continue
+
                 logger.info(f"Running plugin: {plugin_name}")
                 findings = plugin_instance.run(target)
                 if findings:
@@ -94,4 +143,7 @@ class Runner:
                 name = getattr(plugin_instance or plugin_item, "name", str(plugin_item))
                 logger.exception(f"Plugin {name} failed with an unhandled exception: {e}")
         
+        if self.config and "severity_threshold" in self.config:
+            all_findings = filter_findings_by_severity(all_findings, self.config["severity_threshold"])
+
         return all_findings
