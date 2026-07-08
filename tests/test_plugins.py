@@ -1,6 +1,7 @@
 import os
 import shutil
 import tempfile
+import subprocess
 from scanner.core import Runner
 from scanner.static.hardcoded_keys import HardcodedKeys
 from scanner.static.unsafe_output_exec import UnsafeOutputExec
@@ -164,6 +165,48 @@ def test_vulnerable_dependencies_plugin():
         assert len(findings) == 0
     finally:
         shutil.rmtree(temp_good)
+
+def test_hardcoded_keys_git_history():
+    from scanner.static.hardcoded_keys import HardcodedKeys
+    plugin = HardcodedKeys()
+    temp_dir = tempfile.mkdtemp()
+    try:
+        subprocess.run(["git", "init"], cwd=temp_dir, capture_output=True, check=True)
+        subprocess.run(["git", "config", "user.name", "Test User"], cwd=temp_dir, check=True)
+        subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=temp_dir, check=True)
+        
+        file_path = os.path.join(temp_dir, "keys.py")
+        with open(file_path, "w") as f:
+            f.write('openai_key = "sk-abcdefghijklmnopqrstuvwxyz0123456789"\n')
+        
+        subprocess.run(["git", "add", "keys.py"], cwd=temp_dir, check=True)
+        subprocess.run(["git", "commit", "-m", "add OpenAI secret key"], cwd=temp_dir, check=True)
+        
+        with open(file_path, "w") as f:
+            f.write('openai_key = "placeholder_key"\n')
+            
+        subprocess.run(["git", "add", "keys.py"], cwd=temp_dir, check=True)
+        subprocess.run(["git", "commit", "-m", "remove OpenAI secret key"], cwd=temp_dir, check=True)
+        
+        runner = Runner([plugin])
+        findings = runner.run(temp_dir)
+        print("DEBUG FINDINGS:", findings)
+        
+        history_findings = [f for f in findings if f.location.startswith("git-history:")]
+        working_findings = [f for f in findings if not f.location.startswith("git-history:")]
+        print("DEBUG HISTORY:", history_findings)
+        print("DEBUG WORKING:", working_findings)
+        
+        assert len(working_findings) == 0
+        assert len(history_findings) >= 1
+        assert any(f.rule == "openai_key" and f.severity == "critical" for f in history_findings)
+    finally:
+        import stat
+        def make_writable(func, path, exc_info):
+            os.chmod(path, stat.S_IWRITE)
+            func(path)
+        shutil.rmtree(temp_dir, onerror=make_writable)
+
 
 
 
