@@ -143,4 +143,27 @@ def test_excessive_agency_plugin():
     finally:
         shutil.rmtree(temp_good)
 
+def test_vulnerable_dependencies_plugin():
+    from scanner.static.vulnerable_dependencies import VulnerableDependencies
+    plugin = VulnerableDependencies()
+    temp_bad = tempfile.mkdtemp()
+    try:
+        shutil.copy(os.path.join("tests", "samples", "vulnerable_dependencies", "bad_requirements.txt"), os.path.join(temp_bad, "requirements.txt"))
+        runner = Runner([plugin])
+        findings = runner.run(temp_bad)
+        assert len(findings) >= 1
+        assert any(f.rule == "vulnerable_dependencies" for f in findings)
+    finally:
+        shutil.rmtree(temp_bad)
+
+    temp_good = tempfile.mkdtemp()
+    try:
+        shutil.copy(os.path.join("tests", "samples", "vulnerable_dependencies", "good_requirements.txt"), os.path.join(temp_good, "requirements.txt"))
+        runner = Runner([plugin])
+        findings = runner.run(temp_good)
+        assert len(findings) == 0
+    finally:
+        shutil.rmtree(temp_good)
+
+
 
