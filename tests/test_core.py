@@ -1,7 +1,6 @@
 import os
 import shutil
 import tempfile
-import pytest
 from scanner.core import Plugin, Finding, PluginLoader, Runner
 
 def test_plugin_loader_discovery():
