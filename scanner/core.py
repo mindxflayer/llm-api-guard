@@ -88,7 +88,8 @@ class Runner:
                 logger.info(f"Running plugin: {plugin_name}")
                 findings = plugin_instance.run(target)
                 if findings:
-                    all_findings.extend(findings)
+                    from scanner.redact import redact_finding
+                    all_findings.extend([redact_finding(f) for f in findings])
             except Exception as e:
                 name = getattr(plugin_instance or plugin_item, "name", str(plugin_item))
                 logger.exception(f"Plugin {name} failed with an unhandled exception: {e}")

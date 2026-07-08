@@ -2,6 +2,11 @@ import os
 import re
 from scanner.core import Plugin, Finding
 
+OPENAI_RE = re.compile(r'sk-[a-zA-Z0-9]{20,}')
+AWS_RE = re.compile(r'AKIA[0-9A-Z]{16}')
+BEARER_RE = re.compile(r'(?i)\bbearer\s+([a-zA-Z0-9_\-\.\~]{15,})')
+ENV_RE = re.compile(r'\b[A-Za-z0-9_]+\s*=\s*[\'"]?([a-zA-Z0-9_\-\.\~\@\#\$\%\^\&\*\+\=]{8,})[\'"]?')
+
 class HardcodedKeys(Plugin):
     name = "hardcoded_keys"
     severity = "critical"
@@ -11,11 +16,6 @@ class HardcodedKeys(Plugin):
         findings = []
         if not os.path.exists(target):
             return findings
-
-        openai_re = re.compile(r'sk-[a-zA-Z0-9]{20,}')
-        aws_re = re.compile(r'AKIA[0-9A-Z]{16}')
-        bearer_re = re.compile(r'(?i)\bbearer\s+([a-zA-Z0-9_\-\.\~]{15,})')
-        env_re = re.compile(r'^[A-Za-z0-9_]+\s*=\s*[\'"]?([a-zA-Z0-9_\-\.\~\@\#\$\%\^\&\*\+\=]{8,})[\'"]?$')
 
         placeholders = {"your_key_here", "xxx", "placeholder", "your_api_key", "your-key-here", "todo", "replace_me", "<key>", "[key]"}
 
@@ -52,17 +52,17 @@ class HardcodedKeys(Plugin):
                 for line_num, line in enumerate(lines, 1):
                     match_found = False
 
-                    for m in openai_re.finditer(line):
+                    for m in OPENAI_RE.finditer(line):
                         findings.append(Finding(
                             rule="openai_key",
                             severity=self.severity,
-                            message=f"Potential hardcoded OpenAI API key found: {m.group(0)[:10]}...",
+                            message=f"Potential hardcoded OpenAI API key found: {m.group(0)}",
                             location=f"{os.path.relpath(filepath, target)}:{line_num}"
                         ))
                         match_found = True
 
                     if not match_found:
-                        for m in aws_re.finditer(line):
+                        for m in AWS_RE.finditer(line):
                             findings.append(Finding(
                                 rule="aws_key",
                                 severity=self.severity,
@@ -72,26 +72,26 @@ class HardcodedKeys(Plugin):
                             match_found = True
 
                     if not match_found:
-                        for m in bearer_re.finditer(line):
+                        for m in BEARER_RE.finditer(line):
                             token = m.group(1)
                             if not is_placeholder(token):
                                 findings.append(Finding(
                                     rule="bearer_token",
                                     severity=self.severity,
-                                    message=f"Potential hardcoded Bearer token found: {token[:10]}...",
+                                    message=f"Potential hardcoded Bearer token found: {m.group(0)}",
                                     location=f"{os.path.relpath(filepath, target)}:{line_num}"
                                 ))
                                 match_found = True
 
                     if not match_found and is_env_file:
-                        m = env_re.match(line.strip())
+                        m = ENV_RE.search(line)
                         if m:
                             val = m.group(1)
                             if not is_placeholder(val):
                                 findings.append(Finding(
                                     rule="env_secret",
                                     severity=self.severity,
-                                    message=f"Potential secret in env file found: {val[:10]}...",
+                                    message=f"Potential secret in env file found: {m.group(0)}",
                                     location=f"{os.path.relpath(filepath, target)}:{line_num}"
                                 ))
 
