@@ -99,3 +99,48 @@ def test_missing_input_validation_plugin():
     finally:
         shutil.rmtree(temp_good)
 
+def test_system_prompt_leak_plugin():
+    from scanner.static.system_prompt_leak import SystemPromptLeak
+    plugin = SystemPromptLeak()
+    temp_bad = tempfile.mkdtemp()
+    try:
+        shutil.copy(os.path.join("tests", "samples", "system_prompt_leak", "bad.py"), os.path.join(temp_bad, "bad.py"))
+        runner = Runner([plugin])
+        findings = runner.run(temp_bad)
+        assert len(findings) >= 1
+        assert any(f.rule == "system_prompt_leak" for f in findings)
+    finally:
+        shutil.rmtree(temp_bad)
+
+    temp_good = tempfile.mkdtemp()
+    try:
+        shutil.copy(os.path.join("tests", "samples", "system_prompt_leak", "good.py"), os.path.join(temp_good, "good.py"))
+        runner = Runner([plugin])
+        findings = runner.run(temp_good)
+        assert len(findings) == 0
+    finally:
+        shutil.rmtree(temp_good)
+
+def test_excessive_agency_plugin():
+    from scanner.static.excessive_agency import ExcessiveAgency
+    plugin = ExcessiveAgency()
+    temp_bad = tempfile.mkdtemp()
+    try:
+        shutil.copy(os.path.join("tests", "samples", "excessive_agency", "bad.py"), os.path.join(temp_bad, "bad.py"))
+        runner = Runner([plugin])
+        findings = runner.run(temp_bad)
+        assert len(findings) >= 1
+        assert any(f.rule == "excessive_agency" for f in findings)
+    finally:
+        shutil.rmtree(temp_bad)
+
+    temp_good = tempfile.mkdtemp()
+    try:
+        shutil.copy(os.path.join("tests", "samples", "excessive_agency", "good.py"), os.path.join(temp_good, "good.py"))
+        runner = Runner([plugin])
+        findings = runner.run(temp_good)
+        assert len(findings) == 0
+    finally:
+        shutil.rmtree(temp_good)
+
+
