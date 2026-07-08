@@ -54,3 +54,48 @@ def test_unsafe_output_exec_plugin():
         assert len(findings_good) == 0
     finally:
         shutil.rmtree(temp_good)
+
+def test_prompt_injection_flow_plugin():
+    from scanner.static.prompt_injection_flow import PromptInjectionFlow
+    plugin = PromptInjectionFlow()
+    temp_bad = tempfile.mkdtemp()
+    try:
+        shutil.copy(os.path.join("tests", "samples", "prompt_injection_flow", "bad.py"), os.path.join(temp_bad, "bad.py"))
+        runner = Runner([plugin])
+        findings = runner.run(temp_bad)
+        assert len(findings) >= 1
+        assert any(f.rule == "prompt_injection_flow" for f in findings)
+    finally:
+        shutil.rmtree(temp_bad)
+
+    temp_good = tempfile.mkdtemp()
+    try:
+        shutil.copy(os.path.join("tests", "samples", "prompt_injection_flow", "good.py"), os.path.join(temp_good, "good.py"))
+        runner = Runner([plugin])
+        findings = runner.run(temp_good)
+        assert len(findings) == 0
+    finally:
+        shutil.rmtree(temp_good)
+
+def test_missing_input_validation_plugin():
+    from scanner.static.missing_input_validation import MissingInputValidation
+    plugin = MissingInputValidation()
+    temp_bad = tempfile.mkdtemp()
+    try:
+        shutil.copy(os.path.join("tests", "samples", "missing_input_validation", "bad.py"), os.path.join(temp_bad, "bad.py"))
+        runner = Runner([plugin])
+        findings = runner.run(temp_bad)
+        assert len(findings) >= 1
+        assert any(f.rule == "missing_input_validation" for f in findings)
+    finally:
+        shutil.rmtree(temp_bad)
+
+    temp_good = tempfile.mkdtemp()
+    try:
+        shutil.copy(os.path.join("tests", "samples", "missing_input_validation", "good.py"), os.path.join(temp_good, "good.py"))
+        runner = Runner([plugin])
+        findings = runner.run(temp_good)
+        assert len(findings) == 0
+    finally:
+        shutil.rmtree(temp_good)
+
