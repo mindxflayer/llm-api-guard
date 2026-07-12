@@ -2,12 +2,8 @@ import os
 import ast
 from scanner.core import Plugin, Finding
 
-"""
-Limitations:
-this is a heuristic based on naming conventions and will miss system prompts under different variable names, or leaks that happen via logging/error messages rather than the direct response body.
-"""
-
 class SystemPromptLeak(Plugin):
+
     name = "system_prompt_leak"
     severity = "high"
     owasp_ref = "LLM06"

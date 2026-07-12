@@ -3,12 +3,8 @@ import re
 import subprocess
 from scanner.core import Plugin, Finding
 
-"""
-Limitations:
-The git history scanning checks the last 200 commits by default (unless full_history parameter is set to True).
-"""
-
 OPENAI_RE = re.compile(r'sk-[a-zA-Z0-9]{20,}')
+
 AWS_RE = re.compile(r'AKIA[0-9A-Z]{16}')
 BEARER_RE = re.compile(r'(?i)\bbearer\s+([a-zA-Z0-9_\-\.\~]{15,})')
 ENV_RE = re.compile(r'\b[A-Za-z0-9_]+\s*=\s*[\'"]?([a-zA-Z0-9_\-\.\~\@\#\$\%\^\&\*\+\=]{8,})[\'"]?')

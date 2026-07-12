@@ -2,12 +2,8 @@ import os
 import ast
 from scanner.core import Plugin, Finding
 
-"""
-Limitations:
-it does not catch injection flows that pass through multiple functions, or flows arriving via RAG-retrieved documents rather than direct request access.
-"""
-
 class PromptInjectionFlow(Plugin):
+
     name = "prompt_injection_flow"
     severity = "high"
     owasp_ref = "LLM01"

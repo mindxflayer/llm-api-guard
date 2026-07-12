@@ -4,10 +4,6 @@ import json
 from packaging.version import parse as parse_version
 from scanner.core import Plugin, Finding
 
-# LIMITATIONS
-# entries in this dict were manually curated and verified against public advisories as of July 2026; removing unverified entries is intentional and preferred over including plausible-sounding but unconfirmed CVE claims.
-# This plugin's vulnerability data is a static, manually-maintained snapshot and will go stale — it is not a live CVE feed.
-
 class VulnerableDependencies(Plugin):
     name = "vulnerable_dependencies"
     severity = "medium"
@@ -27,9 +23,6 @@ class VulnerableDependencies(Plugin):
             "package-lock.json"
         ]
 
-        # No verified CVE was found for the openai Python package at time of writing, and this can be added back once a real one is confirmed.
-        # No verified CVE was found for the llama-index Python package at time of writing.
-        # Note: This list is static and would need periodic manual updates or a future live-feed integration.
         vulnerability_db = {
             "langchain": [
                 (lambda v: v < parse_version("0.0.236"), "critical", "CVE-2023-36095: RCE via PALChain.from_math_prompt(llm).run passing LLM-generated code to Python's exec() with no AST validation")
@@ -38,6 +31,7 @@ class VulnerableDependencies(Plugin):
                 (lambda v: (v < parse_version("0.3.81")) or (parse_version("1.0.0") <= v < parse_version("1.2.5")), "critical", "CVE-2025-68664: Serialization injection vulnerability (LangGrinch) allowing object injection and potential secret leakage")
             ]
         }
+
 
 
         search_paths = []

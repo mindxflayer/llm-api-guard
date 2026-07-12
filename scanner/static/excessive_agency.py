@@ -2,12 +2,8 @@ import os
 import ast
 from scanner.core import Plugin, Finding
 
-"""
-Limitations:
-this heuristic will have false positives on tools that do validate inputs via a helper function defined elsewhere (interprocedural validation won't be detected).
-"""
-
 class ExcessiveAgency(Plugin):
+
     name = "excessive_agency"
     severity = "high"
     owasp_ref = "LLM08"
