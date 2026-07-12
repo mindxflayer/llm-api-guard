@@ -17,7 +17,13 @@ class Finding:
     location: str
     suppressed: bool = False
 
+@dataclass
+class LiveTarget:
+    url: str
+    headers: dict = None
+
 class Plugin(ABC):
+
     name: str = ""
     severity: str = ""
     owasp_ref: str = ""
