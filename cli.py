@@ -3,6 +3,7 @@ import argparse
 import sys
 from scanner.core import load_config, PluginLoader, Runner
 from scanner.report import write_json_report
+from scanner.live import confirm_authorization
 
 def run_repo_scan(args):
     config = load_config(args.config)
@@ -42,13 +43,17 @@ def main():
     
     url_parser = subparsers.add_parser("url", help="Scan a live API url")
     url_parser.add_argument("--url", required=True, help="URL of the LLM API endpoint to scan")
+    url_parser.add_argument("--i-have-permission", action="store_true", help="Authorize the live scan immediately without prompt")
     
     args = parser.parse_args()
     
     if args.command == "repo":
         run_repo_scan(args)
     elif args.command == "url":
-        print("live scanning not yet implemented")
+        if not confirm_authorization(args.url, interactive=True, permission_flag=args.i_have_permission):
+            print("Scan refused: Live scanning requires authorization.")
+            sys.exit(1)
+        print("Authorization granted. Live scanning not yet implemented.")
         sys.exit(0)
     else:
         parser.print_help()
