@@ -56,8 +56,8 @@ def test_cli_format_option():
     findings = [Finding("r1", "medium", "m1", "l1")]
     
     class FakeArgs:
-        config = "dummy_config"
-        repo = "dummy_repo"
+        config = "scanner/config.yaml"
+        repo = "."
         output = "test_output.json"
         baseline = None
         save_baseline = None

@@ -38,6 +38,14 @@ def determine_exit_code(findings: list[Finding], fail_on: str = None, fail_on_ne
         return 0, summary
 
 def run_repo_scan(args):
+    if getattr(args, "config", None) and not os.path.exists(args.config):
+        print(f"Error: Config file '{args.config}' does not exist.")
+        sys.exit(1)
+        
+    if getattr(args, "repo", None) and not os.path.exists(args.repo):
+        print(f"Error: Repo path '{args.repo}' does not exist.")
+        sys.exit(1)
+        
     if getattr(args, "fail_on_new", False) and not getattr(args, "baseline", None):
         print("Usage error: --fail-on-new requires --baseline to be provided.")
         sys.exit(1)
@@ -114,6 +122,17 @@ def run_repo_scan(args):
         sys.exit(code)
 
 def run_url_scan(args):
+    if getattr(args, "config", None) and not os.path.exists(args.config):
+        print(f"Error: Config file '{args.config}' does not exist.")
+        sys.exit(1)
+        
+    if getattr(args, "url", None):
+        from urllib.parse import urlparse
+        parsed = urlparse(args.url)
+        if not parsed.scheme or not parsed.netloc:
+            print(f"Error: Invalid URL '{args.url}'. URL must include a scheme (e.g. http:// or https://).")
+            sys.exit(1)
+            
     if getattr(args, "fail_on_new", False) and not getattr(args, "baseline", None):
         print("Usage error: --fail-on-new requires --baseline to be provided.")
         sys.exit(1)
@@ -206,7 +225,17 @@ def run_url_scan(args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="llm-api-guard - Plugin-based security scanner for LLM-powered APIs"
+        description="llm-api-guard - Plugin-based security scanner for LLM-powered APIs",
+        epilog="""Examples:
+  llm-api-guard repo --repo .
+  llm-api-guard url --url https://api.example.com/chat --i-have-permission""",
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version="llm-api-guard 0.1.0",
+        help="Show program's version number and exit"
     )
     subparsers = parser.add_subparsers(
         dest="command",
@@ -215,27 +244,27 @@ def main():
     )
     
     repo_parser = subparsers.add_parser("repo", help="Scan a local repository / codebase path")
-    repo_parser.add_argument("--repo", required=True, help="Path to the repository to scan")
-    repo_parser.add_argument("--config", default="scanner/config.yaml", help="Path to the config.yaml configuration file")
+    repo_parser.add_argument("--repo", required=True, help="Path to the local repository code to scan")
+    repo_parser.add_argument("--config", default="scanner/config.yaml", help="Path to the configuration YAML file")
     repo_parser.add_argument("--output", default="report.json", help="Path to write the report findings")
-    repo_parser.add_argument("--baseline", help="Path to baseline JSON file")
+    repo_parser.add_argument("--baseline", help="Path to baseline JSON file for filtering existing findings")
     repo_parser.add_argument("--save-baseline", help="Path to save baseline JSON file")
     repo_parser.add_argument("--fail-on", choices=["low", "medium", "high", "critical"], help="Severity threshold to trigger a non-zero exit code")
-    repo_parser.add_argument("--fail-on-new", action="store_true", help="Only fail on new findings not present in baseline")
-    repo_parser.add_argument("--format", default="json", help="Report output format (e.g. json, html, sarif)")
+    repo_parser.add_argument("--fail-on-new", action="store_true", help="Only fail on new findings not present in the baseline")
+    repo_parser.add_argument("--format", default="json", help="Report output formats (supports comma-separated list, e.g. json,html,sarif)")
     
     url_parser = subparsers.add_parser("url", help="Scan a live API url")
-    url_parser.add_argument("--url", required=True, help="URL of the LLM API endpoint to scan")
-    url_parser.add_argument("--header", action="append", help="HTTP header to include (e.g. 'Authorization: Bearer token')")
-    url_parser.add_argument("--config", default="scanner/config.yaml", help="Path to the config.yaml configuration file")
+    url_parser.add_argument("--url", required=True, help="URL of the live LLM API endpoint to scan")
+    url_parser.add_argument("--header", action="append", help="HTTP header to include in live scanning checks (e.g. 'Authorization: Bearer token')")
+    url_parser.add_argument("--config", default="scanner/config.yaml", help="Path to the configuration YAML file")
     url_parser.add_argument("--output", default="report.json", help="Path to write the report findings")
     url_parser.add_argument("--i-have-permission", action="store_true", help="Authorize the live scan immediately without prompt")
-    url_parser.add_argument("--checks", default="live", help="Checks type (e.g., 'live')")
-    url_parser.add_argument("--baseline", help="Path to baseline JSON file")
+    url_parser.add_argument("--checks", default="live", help="Type of checks to run")
+    url_parser.add_argument("--baseline", help="Path to baseline JSON file for filtering existing findings")
     url_parser.add_argument("--save-baseline", help="Path to save baseline JSON file")
     url_parser.add_argument("--fail-on", choices=["low", "medium", "high", "critical"], help="Severity threshold to trigger a non-zero exit code")
-    url_parser.add_argument("--fail-on-new", action="store_true", help="Only fail on new findings not present in baseline")
-    url_parser.add_argument("--format", default="json", help="Report output format (e.g. json, html, sarif)")
+    url_parser.add_argument("--fail-on-new", action="store_true", help="Only fail on new findings not present in the baseline")
+    url_parser.add_argument("--format", default="json", help="Report output formats (supports comma-separated list, e.g. json,html,sarif)")
     
     args = parser.parse_args()
     
