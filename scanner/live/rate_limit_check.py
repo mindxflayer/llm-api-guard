@@ -10,7 +10,6 @@ class RateLimitCheck(Plugin):
         self.num_requests = num_requests
 
     def run(self, target) -> list[Finding]:
-        # NOTE: This plugin assumes confirm_authorization() has already been called by the CLI layer before any live plugin's run() is invoked, and that this is enforced at the CLI/runner level, not per-plugin.
         url = target.url if hasattr(target, "url") else target.get("url")
         headers = target.headers if hasattr(target, "headers") else target.get("headers", {})
 
