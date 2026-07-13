@@ -2,7 +2,7 @@ import os
 import argparse
 import sys
 from scanner.core import load_config, PluginLoader, Runner, LiveTarget, Finding
-from scanner.report import write_json_report, write_html_report
+from scanner.report import write_json_report, write_html_report, write_sarif_report
 from scanner.live import confirm_authorization
 from scanner.baseline import load_baseline, save_baseline, filter_new_findings
 
@@ -65,22 +65,33 @@ def run_repo_scan(args):
         save_baseline(findings, args.save_baseline)
         print(f"Baseline saved to: {args.save_baseline}")
         
-    fmt = getattr(args, "format", "json")
+    fmt_str = getattr(args, "format", "json").lower()
+    if fmt_str == "both":
+        formats = ["json", "html"]
+    else:
+        formats = [f.strip() for f in fmt_str.split(",") if f.strip()]
+        
     output_base, _ = os.path.splitext(args.output)
+    written_reports = []
     
-    if fmt == "json":
-        write_json_report(findings, args.output)
-        print(f"Report written to: {args.output}")
-    elif fmt == "html":
-        html_out = f"{output_base}.html"
-        write_html_report(findings, html_out, baseline_used=baseline_used, baselined_count=baselined_count)
-        print(f"Report written to: {html_out}")
-    elif fmt == "both":
-        json_out = f"{output_base}.json"
-        html_out = f"{output_base}.html"
-        write_json_report(findings, json_out)
-        write_html_report(findings, html_out, baseline_used=baseline_used, baselined_count=baselined_count)
-        print(f"Reports written to: {json_out} and {html_out}")
+    for fmt in formats:
+        if fmt == "json":
+            out_file = f"{output_base}.json" if len(formats) > 1 or fmt_str != "json" else args.output
+            write_json_report(findings, out_file)
+            written_reports.append(out_file)
+        elif fmt == "html":
+            html_out = f"{output_base}.html"
+            write_html_report(findings, html_out, baseline_used=baseline_used, baselined_count=baselined_count)
+            written_reports.append(html_out)
+        elif fmt == "sarif":
+            sarif_out = f"{output_base}.sarif"
+            write_sarif_report(findings, sarif_out)
+            written_reports.append(sarif_out)
+            
+    if len(written_reports) == 1:
+        print(f"Report written to: {written_reports[0]}")
+    elif len(written_reports) > 1:
+        print(f"Reports written to: {', '.join(written_reports)}")
     
     summary = {"critical": 0, "high": 0, "medium": 0, "low": 0}
     for f in findings:
@@ -145,22 +156,33 @@ def run_url_scan(args):
         save_baseline(findings, args.save_baseline)
         print(f"Baseline saved to: {args.save_baseline}")
         
-    fmt = getattr(args, "format", "json")
+    fmt_str = getattr(args, "format", "json").lower()
+    if fmt_str == "both":
+        formats = ["json", "html"]
+    else:
+        formats = [f.strip() for f in fmt_str.split(",") if f.strip()]
+        
     output_base, _ = os.path.splitext(args.output)
+    written_reports = []
     
-    if fmt == "json":
-        write_json_report(findings, args.output)
-        print(f"Report written to: {args.output}")
-    elif fmt == "html":
-        html_out = f"{output_base}.html"
-        write_html_report(findings, html_out, baseline_used=baseline_used, baselined_count=baselined_count)
-        print(f"Report written to: {html_out}")
-    elif fmt == "both":
-        json_out = f"{output_base}.json"
-        html_out = f"{output_base}.html"
-        write_json_report(findings, json_out)
-        write_html_report(findings, html_out, baseline_used=baseline_used, baselined_count=baselined_count)
-        print(f"Reports written to: {json_out} and {html_out}")
+    for fmt in formats:
+        if fmt == "json":
+            out_file = f"{output_base}.json" if len(formats) > 1 or fmt_str != "json" else args.output
+            write_json_report(findings, out_file)
+            written_reports.append(out_file)
+        elif fmt == "html":
+            html_out = f"{output_base}.html"
+            write_html_report(findings, html_out, baseline_used=baseline_used, baselined_count=baselined_count)
+            written_reports.append(html_out)
+        elif fmt == "sarif":
+            sarif_out = f"{output_base}.sarif"
+            write_sarif_report(findings, sarif_out)
+            written_reports.append(sarif_out)
+            
+    if len(written_reports) == 1:
+        print(f"Report written to: {written_reports[0]}")
+    elif len(written_reports) > 1:
+        print(f"Reports written to: {', '.join(written_reports)}")
     
     summary = {"critical": 0, "high": 0, "medium": 0, "low": 0}
     for f in findings:
@@ -200,7 +222,7 @@ def main():
     repo_parser.add_argument("--save-baseline", help="Path to save baseline JSON file")
     repo_parser.add_argument("--fail-on", choices=["low", "medium", "high", "critical"], help="Severity threshold to trigger a non-zero exit code")
     repo_parser.add_argument("--fail-on-new", action="store_true", help="Only fail on new findings not present in baseline")
-    repo_parser.add_argument("--format", choices=["json", "html", "both"], default="json", help="Report output format")
+    repo_parser.add_argument("--format", default="json", help="Report output format (e.g. json, html, sarif)")
     
     url_parser = subparsers.add_parser("url", help="Scan a live API url")
     url_parser.add_argument("--url", required=True, help="URL of the LLM API endpoint to scan")
@@ -213,7 +235,7 @@ def main():
     url_parser.add_argument("--save-baseline", help="Path to save baseline JSON file")
     url_parser.add_argument("--fail-on", choices=["low", "medium", "high", "critical"], help="Severity threshold to trigger a non-zero exit code")
     url_parser.add_argument("--fail-on-new", action="store_true", help="Only fail on new findings not present in baseline")
-    url_parser.add_argument("--format", choices=["json", "html", "both"], default="json", help="Report output format")
+    url_parser.add_argument("--format", default="json", help="Report output format (e.g. json, html, sarif)")
     
     args = parser.parse_args()
     

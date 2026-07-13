@@ -140,3 +140,110 @@ def write_html_report(findings: list[Finding], output_path: str, baseline_used: 
     
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(rendered)
+
+def write_sarif_report(findings: list[Finding], output_path: str, tool_version: str = "0.1.0") -> None:
+    rules = {}
+    for f in findings:
+        rule_id = f.rule
+        if rule_id not in rules:
+            desc = f"OWASP Category Reference: {f.owasp_ref}" if f.owasp_ref else f"Rule detector for {rule_id}"
+            rules[rule_id] = {
+                "id": rule_id,
+                "shortDescription": {
+                    "text": desc
+                },
+                "helpUri": "https://github.com/OWASP/www-project-top-10-for-large-language-model-applications"
+            }
+            
+    results = []
+    severity_map = {
+        "critical": "error",
+        "high": "error",
+        "medium": "warning",
+        "low": "note"
+    }
+    
+    for f in findings:
+        level = severity_map.get(f.severity.lower(), "warning")
+        
+        file_path = f.location or ""
+        line_num = 1
+        is_physical = False
+        
+        if ":" in file_path:
+            last_idx = file_path.rfind(":")
+            potential_line = file_path[last_idx+1:]
+            if potential_line.isdigit():
+                line_num = int(potential_line)
+                file_path = file_path[:last_idx]
+                if not (file_path.startswith("git-history:") or file_path.startswith("http:") or file_path.startswith("https:")):
+                    is_physical = True
+                    
+        if not is_physical and not (file_path.startswith("http:") or file_path.startswith("https:") or "git-history" in file_path):
+            if file_path and not file_path.startswith("http"):
+                is_physical = True
+                
+        msg_text = f.message
+        location_obj = {}
+        
+        if is_physical:
+            location_obj = {
+                "physicalLocation": {
+                    "artifactLocation": {
+                        "uri": file_path
+                    },
+                    "region": {
+                        "startLine": line_num
+                    }
+                }
+            }
+        else:
+            msg_text = f"{f.message} (Location: {f.location})"
+            location_obj = {
+                "logicalLocations": [
+                    {
+                        "fullyQualifiedName": f.location or "",
+                        "kind": "member"
+                    }
+                ]
+            }
+            
+        res_obj = {
+            "ruleId": f.rule,
+            "level": level,
+            "message": {
+                "text": msg_text
+            },
+            "locations": [location_obj]
+        }
+        
+        if f.suppressed:
+            res_obj["suppressions"] = [
+                {
+                    "kind": "external",
+                    "status": "accepted"
+                }
+            ]
+            
+        results.append(res_obj)
+        
+    sarif_run = {
+        "tool": {
+            "driver": {
+                "name": "llm-api-guard",
+                "version": tool_version,
+                "informationUri": "https://github.com/mindxflayer/llm-api-guard",
+                "rules": list(rules.values())
+            }
+        },
+        "results": results
+    }
+    
+    sarif_data = {
+        "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+        "version": "2.1.0",
+        "runs": [sarif_run]
+    }
+    
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(sarif_data, f, indent=2)
