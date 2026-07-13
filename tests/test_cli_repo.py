@@ -11,6 +11,8 @@ target_type: repo
 checks:
   hardcoded_keys: true
   unsafe_output_exec: true
+live_checks:
+  rate_limit_check: true
 severity_threshold: low
 """)
         os.close(fd)

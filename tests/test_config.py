@@ -11,6 +11,8 @@ target_type: repo
 checks:
   hardcoded_keys: true
   unsafe_output_exec: false
+live_checks:
+  rate_limit_check: true
 severity_threshold: high
 """
     fd, path = tempfile.mkstemp(suffix=".yaml")
@@ -32,6 +34,8 @@ def test_load_config_invalid():
 target_type: repo
 checks:
   hardcoded_keys: true
+live_checks:
+  rate_limit_check: true
 """
         os.write(fd, content1.encode('utf-8'))
         os.close(fd)
@@ -46,6 +50,8 @@ checks:
 target_type: repo
 checks:
   hardcoded_keys: true
+live_checks:
+  rate_limit_check: true
 severity_threshold: extreme
 """
         os.write(fd, content2.encode('utf-8'))
@@ -60,6 +66,8 @@ severity_threshold: extreme
         content3 = """
 target_type: repo
 checks: true
+live_checks:
+  rate_limit_check: true
 severity_threshold: low
 """
         os.write(fd, content3.encode('utf-8'))

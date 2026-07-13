@@ -100,6 +100,15 @@ def load_config(path: str) -> dict:
         if not isinstance(v, bool):
             raise ValueError(f"Check status for {k} must be boolean")
 
+    if "live_checks" not in data:
+        raise ValueError("Missing required key: live_checks")
+    if not isinstance(data["live_checks"], dict):
+        raise ValueError("live_checks must be a dictionary")
+
+    for k, v in data["live_checks"].items():
+        if not isinstance(v, bool):
+            raise ValueError(f"Check status for {k} must be boolean")
+
     return data
 
 def filter_findings_by_severity(findings: list[Finding], threshold: str) -> list[Finding]:
@@ -118,11 +127,19 @@ class Runner:
         self.plugins = plugins
         self.config = config
 
-    def run(self, target: str) -> list[Finding]:
+    def run(self, target) -> list[Finding]:
         all_findings = []
         checks = None
+        
+        is_live = False
+        if hasattr(target, "url") or (isinstance(target, dict) and "url" in target):
+            is_live = True
+
         if self.config:
-            checks = self.config.get("checks", {})
+            if is_live:
+                checks = self.config.get("live_checks", {})
+            else:
+                checks = self.config.get("checks", {})
 
         for plugin_item in self.plugins:
             plugin_instance = None

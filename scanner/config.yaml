@@ -2,4 +2,16 @@ target_type: repo
 checks:
   hardcoded_keys: true
   unsafe_output_exec: true
+  prompt_injection_flow: true
+  missing_input_validation: true
+  system_prompt_leak: true
+  excessive_agency: true
+  vulnerable_dependencies: true
+live_checks:
+  rate_limit_check: true
+  cors_misconfig: true
+  injection_payload_check: false
+  pii_leak_check: false
+  ssrf_tool_check: false
 severity_threshold: medium
+require_permission_ack: true
