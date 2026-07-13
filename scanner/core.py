@@ -161,7 +161,11 @@ class Runner:
                 findings = plugin_instance.run(target)
                 if findings:
                     from scanner.redact import redact_finding
-                    all_findings.extend([redact_finding(f) for f in findings])
+                    from scanner.baseline import check_inline_suppression
+                    for f in findings:
+                        if check_inline_suppression(f, target):
+                            f.suppressed = True
+                        all_findings.append(redact_finding(f))
             except Exception as e:
                 name = getattr(plugin_instance or plugin_item, "name", str(plugin_item))
                 logger.exception(f"Plugin {name} failed with an unhandled exception: {e}")

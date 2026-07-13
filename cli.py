@@ -4,6 +4,7 @@ import sys
 from scanner.core import load_config, PluginLoader, Runner, LiveTarget
 from scanner.report import write_json_report
 from scanner.live import confirm_authorization
+from scanner.baseline import load_baseline, save_baseline, filter_new_findings
 
 def run_repo_scan(args):
     config = load_config(args.config)
@@ -15,6 +16,17 @@ def run_repo_scan(args):
     runner = Runner(plugins, config=config)
     findings = runner.run(args.repo)
     
+    if getattr(args, "baseline", None):
+        baseline_set = load_baseline(args.baseline)
+        new_findings = filter_new_findings(findings, baseline_set)
+        for f in findings:
+            if f not in new_findings:
+                f.suppressed = True
+                
+    if getattr(args, "save_baseline", None):
+        save_baseline(findings, args.save_baseline)
+        print(f"Baseline saved to: {args.save_baseline}")
+        
     write_json_report(findings, args.output)
     
     summary = {"critical": 0, "high": 0, "medium": 0, "low": 0}
@@ -51,6 +63,17 @@ def run_url_scan(args):
     runner = Runner(plugins, config=config)
     findings = runner.run(target)
     
+    if getattr(args, "baseline", None):
+        baseline_set = load_baseline(args.baseline)
+        new_findings = filter_new_findings(findings, baseline_set)
+        for f in findings:
+            if f not in new_findings:
+                f.suppressed = True
+                
+    if getattr(args, "save_baseline", None):
+        save_baseline(findings, args.save_baseline)
+        print(f"Baseline saved to: {args.save_baseline}")
+        
     write_json_report(findings, args.output)
     
     summary = {"critical": 0, "high": 0, "medium": 0, "low": 0}
@@ -76,6 +99,8 @@ def main():
     repo_parser.add_argument("--repo", required=True, help="Path to the repository to scan")
     repo_parser.add_argument("--config", default="scanner/config.yaml", help="Path to the config.yaml configuration file")
     repo_parser.add_argument("--output", default="report.json", help="Path to write the report findings")
+    repo_parser.add_argument("--baseline", help="Path to baseline JSON file")
+    repo_parser.add_argument("--save-baseline", help="Path to save baseline JSON file")
     
     url_parser = subparsers.add_parser("url", help="Scan a live API url")
     url_parser.add_argument("--url", required=True, help="URL of the LLM API endpoint to scan")
@@ -84,6 +109,8 @@ def main():
     url_parser.add_argument("--output", default="report.json", help="Path to write the report findings")
     url_parser.add_argument("--i-have-permission", action="store_true", help="Authorize the live scan immediately without prompt")
     url_parser.add_argument("--checks", default="live", help="Checks type (e.g., 'live')")
+    url_parser.add_argument("--baseline", help="Path to baseline JSON file")
+    url_parser.add_argument("--save-baseline", help="Path to save baseline JSON file")
     
     args = parser.parse_args()
     
