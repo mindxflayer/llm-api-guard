@@ -2,6 +2,7 @@ import re
 from scanner.core import Plugin, Finding
 from scanner.live.throttle import ThrottledRequester
 from scanner.live.payloads import load_payloads
+from scanner.live.streaming import assemble_response
 
 class InjectionPayloadCheck(Plugin):
     """
@@ -37,19 +38,7 @@ class InjectionPayloadCheck(Plugin):
             if res is None:
                 continue
 
-            content_type = res.headers.get("Content-Type", "")
-            transfer_encoding = res.headers.get("Transfer-Encoding", "")
-
-            is_stream = "text/event-stream" in content_type.lower() or "chunked" in transfer_encoding.lower()
-
-            if is_stream:
-                chunks = []
-                for chunk in res.iter_lines(decode_unicode=True):
-                    if chunk:
-                        chunks.append(chunk)
-                response_text = "\n".join(chunks)
-            else:
-                response_text = res.text
+            response_text = assemble_response(res)
 
             if self._check_compliance(response_text, p):
                 findings.append(Finding(
