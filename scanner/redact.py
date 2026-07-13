@@ -33,5 +33,6 @@ def redact_finding(finding: Finding) -> Finding:
         severity=finding.severity,
         message=redact_text(finding.message),
         location=redact_text(finding.location),
-        suppressed=finding.suppressed
+        suppressed=finding.suppressed,
+        owasp_ref=finding.owasp_ref
     )

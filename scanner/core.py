@@ -16,6 +16,7 @@ class Finding:
     message: str
     location: str
     suppressed: bool = False
+    owasp_ref: str = ""
 
 @dataclass
 class LiveTarget:
@@ -163,6 +164,8 @@ class Runner:
                     from scanner.redact import redact_finding
                     from scanner.baseline import check_inline_suppression
                     for f in findings:
+                        if not getattr(f, "owasp_ref", ""):
+                            f.owasp_ref = getattr(plugin_instance, "owasp_ref", "")
                         if check_inline_suppression(f, target):
                             f.suppressed = True
                         all_findings.append(redact_finding(f))

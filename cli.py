@@ -2,7 +2,7 @@ import os
 import argparse
 import sys
 from scanner.core import load_config, PluginLoader, Runner, LiveTarget, Finding
-from scanner.report import write_json_report
+from scanner.report import write_json_report, write_html_report
 from scanner.live import confirm_authorization
 from scanner.baseline import load_baseline, save_baseline, filter_new_findings
 
@@ -51,18 +51,36 @@ def run_repo_scan(args):
     runner = Runner(plugins, config=config)
     findings = runner.run(args.repo)
     
-    if getattr(args, "baseline", None):
+    baseline_used = bool(getattr(args, "baseline", None))
+    baselined_count = 0
+    if baseline_used:
         baseline_set = load_baseline(args.baseline)
         new_findings = filter_new_findings(findings, baseline_set)
         for f in findings:
             if f not in new_findings:
                 f.suppressed = True
+                baselined_count += 1
                 
     if getattr(args, "save_baseline", None):
         save_baseline(findings, args.save_baseline)
         print(f"Baseline saved to: {args.save_baseline}")
         
-    write_json_report(findings, args.output)
+    fmt = getattr(args, "format", "json")
+    output_base, _ = os.path.splitext(args.output)
+    
+    if fmt == "json":
+        write_json_report(findings, args.output)
+        print(f"Report written to: {args.output}")
+    elif fmt == "html":
+        html_out = f"{output_base}.html"
+        write_html_report(findings, html_out, baseline_used=baseline_used, baselined_count=baselined_count)
+        print(f"Report written to: {html_out}")
+    elif fmt == "both":
+        json_out = f"{output_base}.json"
+        html_out = f"{output_base}.html"
+        write_json_report(findings, json_out)
+        write_html_report(findings, html_out, baseline_used=baseline_used, baselined_count=baselined_count)
+        print(f"Reports written to: {json_out} and {html_out}")
     
     summary = {"critical": 0, "high": 0, "medium": 0, "low": 0}
     for f in findings:
@@ -71,14 +89,13 @@ def run_repo_scan(args):
         
     print(f"Scan complete. Total findings: {len(findings)}")
     print(f"Severity breakdown: Critical={summary['critical']}, High={summary['high']}, Medium={summary['medium']}, Low={summary['low']}")
-    print(f"Report written to: {args.output}")
     
     code, exit_summary = determine_exit_code(
         findings=findings,
         fail_on=getattr(args, "fail_on", None),
         fail_on_new=getattr(args, "fail_on_new", False),
-        baseline_provided=bool(getattr(args, "baseline", None)),
-        baseline_set=load_baseline(args.baseline) if getattr(args, "baseline", None) else None
+        baseline_provided=baseline_used,
+        baseline_set=load_baseline(args.baseline) if baseline_used else None
     )
     if exit_summary:
         print(exit_summary)
@@ -114,18 +131,36 @@ def run_url_scan(args):
     runner = Runner(plugins, config=config)
     findings = runner.run(target)
     
-    if getattr(args, "baseline", None):
+    baseline_used = bool(getattr(args, "baseline", None))
+    baselined_count = 0
+    if baseline_used:
         baseline_set = load_baseline(args.baseline)
         new_findings = filter_new_findings(findings, baseline_set)
         for f in findings:
             if f not in new_findings:
                 f.suppressed = True
+                baselined_count += 1
                 
     if getattr(args, "save_baseline", None):
         save_baseline(findings, args.save_baseline)
         print(f"Baseline saved to: {args.save_baseline}")
         
-    write_json_report(findings, args.output)
+    fmt = getattr(args, "format", "json")
+    output_base, _ = os.path.splitext(args.output)
+    
+    if fmt == "json":
+        write_json_report(findings, args.output)
+        print(f"Report written to: {args.output}")
+    elif fmt == "html":
+        html_out = f"{output_base}.html"
+        write_html_report(findings, html_out, baseline_used=baseline_used, baselined_count=baselined_count)
+        print(f"Report written to: {html_out}")
+    elif fmt == "both":
+        json_out = f"{output_base}.json"
+        html_out = f"{output_base}.html"
+        write_json_report(findings, json_out)
+        write_html_report(findings, html_out, baseline_used=baseline_used, baselined_count=baselined_count)
+        print(f"Reports written to: {json_out} and {html_out}")
     
     summary = {"critical": 0, "high": 0, "medium": 0, "low": 0}
     for f in findings:
@@ -134,14 +169,13 @@ def run_url_scan(args):
         
     print(f"Scan complete. Total findings: {len(findings)}")
     print(f"Severity breakdown: Critical={summary['critical']}, High={summary['high']}, Medium={summary['medium']}, Low={summary['low']}")
-    print(f"Report written to: {args.output}")
     
     code, exit_summary = determine_exit_code(
         findings=findings,
         fail_on=getattr(args, "fail_on", None),
         fail_on_new=getattr(args, "fail_on_new", False),
-        baseline_provided=bool(getattr(args, "baseline", None)),
-        baseline_set=load_baseline(args.baseline) if getattr(args, "baseline", None) else None
+        baseline_provided=baseline_used,
+        baseline_set=load_baseline(args.baseline) if baseline_used else None
     )
     if exit_summary:
         print(exit_summary)
@@ -166,6 +200,7 @@ def main():
     repo_parser.add_argument("--save-baseline", help="Path to save baseline JSON file")
     repo_parser.add_argument("--fail-on", choices=["low", "medium", "high", "critical"], help="Severity threshold to trigger a non-zero exit code")
     repo_parser.add_argument("--fail-on-new", action="store_true", help="Only fail on new findings not present in baseline")
+    repo_parser.add_argument("--format", choices=["json", "html", "both"], default="json", help="Report output format")
     
     url_parser = subparsers.add_parser("url", help="Scan a live API url")
     url_parser.add_argument("--url", required=True, help="URL of the LLM API endpoint to scan")
@@ -178,6 +213,7 @@ def main():
     url_parser.add_argument("--save-baseline", help="Path to save baseline JSON file")
     url_parser.add_argument("--fail-on", choices=["low", "medium", "high", "critical"], help="Severity threshold to trigger a non-zero exit code")
     url_parser.add_argument("--fail-on-new", action="store_true", help="Only fail on new findings not present in baseline")
+    url_parser.add_argument("--format", choices=["json", "html", "both"], default="json", help="Report output format")
     
     args = parser.parse_args()
     
