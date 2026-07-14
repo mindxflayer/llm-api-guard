@@ -1,0 +1,201 @@
+STDOUT:
+============================= test session starts =============================
+platform win32 -- Python 3.10.1, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\ishaa\OneDrive\Desktop\llm-api-guard
+collecting ... collected 0 items / 19 errors
+
+=================================== ERRORS ====================================
+________________________ ERROR collecting test_out.txt ________________________
+..\..\..\AppData\Local\Programs\Python\Python310\lib\pathlib.py:1133: in read_text
+    return f.read()
+..\..\..\AppData\Local\Programs\Python\Python310\lib\codecs.py:322: in decode
+    (result, consumed) = self._buffer_decode(data, self.errors, final)
+E   UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+___________________ ERROR collecting tests/test_baseline.py ___________________
+ImportError while importing test module 'C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\tests\test_baseline.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\test_baseline.py:5: in <module>
+    from scanner.core import Finding, Runner, Plugin
+E   ModuleNotFoundError: No module named 'scanner'
+________________ ERROR collecting tests/test_cli_exit_codes.py ________________
+ImportError while importing test module 'C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\tests\test_cli_exit_codes.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\test_cli_exit_codes.py:2: in <module>
+    from scanner.core import Finding
+E   ModuleNotFoundError: No module named 'scanner'
+__________________ ERROR collecting tests/test_cli_polish.py __________________
+ImportError while importing test module 'C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\tests\test_cli_polish.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\test_cli_polish.py:3: in <module>
+    from cli import main
+E   ModuleNotFoundError: No module named 'cli'
+___________________ ERROR collecting tests/test_cli_repo.py ___________________
+ImportError while importing test module 'C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\tests\test_cli_repo.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\test_cli_repo.py:4: in <module>
+    from cli import run_repo_scan
+E   ModuleNotFoundError: No module named 'cli'
+___________________ ERROR collecting tests/test_cli_url.py ____________________
+ImportError while importing test module 'C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\tests\test_cli_url.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\test_cli_url.py:5: in <module>
+    from cli import main
+E   ModuleNotFoundError: No module named 'cli'
+____________________ ERROR collecting tests/test_config.py ____________________
+ImportError while importing test module 'C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\tests\test_config.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\test_config.py:5: in <module>
+    from scanner.core import Finding, load_config, filter_findings_by_severity, Runner
+E   ModuleNotFoundError: No module named 'scanner'
+_____________________ ERROR collecting tests/test_core.py _____________________
+ImportError while importing test module 'C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\tests\test_core.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\test_core.py:4: in <module>
+    from scanner.core import Plugin, Finding, PluginLoader, Runner
+E   ModuleNotFoundError: No module named 'scanner'
+________________ ERROR collecting tests/test_cors_misconfig.py ________________
+ImportError while importing test module 'C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\tests\test_cors_misconfig.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\test_cors_misconfig.py:2: in <module>
+    from scanner.core import LiveTarget
+E   ModuleNotFoundError: No module named 'scanner'
+___________ ERROR collecting tests/test_injection_payload_check.py ____________
+ImportError while importing test module 'C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\tests\test_injection_payload_check.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\test_injection_payload_check.py:3: in <module>
+    from scanner.core import LiveTarget
+E   ModuleNotFoundError: No module named 'scanner'
+___________________ ERROR collecting tests/test_payloads.py ___________________
+ImportError while importing test module 'C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\tests\test_payloads.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\test_payloads.py:3: in <module>
+    from scanner.live.payloads import load_payloads
+E   ModuleNotFoundError: No module named 'scanner'
+__________________ ERROR collecting tests/test_permission.py __________________
+ImportError while importing test module 'C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\tests\test_permission.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\test_permission.py:6: in <module>
+    from scanner.live import confirm_authorization, log_authorization
+E   ModuleNotFoundError: No module named 'scanner'
+________________ ERROR collecting tests/test_pii_leak_check.py ________________
+ImportError while importing test module 'C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\tests\test_pii_leak_check.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\test_pii_leak_check.py:3: in <module>
+    from scanner.core import LiveTarget
+E   ModuleNotFoundError: No module named 'scanner'
+___________________ ERROR collecting tests/test_plugins.py ____________________
+ImportError while importing test module 'C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\tests\test_plugins.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\test_plugins.py:5: in <module>
+    from scanner.core import Runner
+E   ModuleNotFoundError: No module named 'scanner'
+_______________ ERROR collecting tests/test_rate_limit_check.py _______________
+ImportError while importing test module 'C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\tests\test_rate_limit_check.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\test_rate_limit_check.py:2: in <module>
+    from scanner.core import LiveTarget
+E   ModuleNotFoundError: No module named 'scanner'
+____________________ ERROR collecting tests/test_redact.py ____________________
+ImportError while importing test module 'C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\tests\test_redact.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\test_redact.py:4: in <module>
+    from scanner.core import Runner, Finding
+E   ModuleNotFoundError: No module named 'scanner'
+____________________ ERROR collecting tests/test_report.py ____________________
+ImportError while importing test module 'C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\tests\test_report.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\test_report.py:5: in <module>
+    from scanner.core import Finding
+E   ModuleNotFoundError: No module named 'scanner'
+_______________ ERROR collecting tests/test_ssrf_tool_check.py ________________
+ImportError while importing test module 'C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\tests\test_ssrf_tool_check.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\test_ssrf_tool_check.py:3: in <module>
+    from scanner.core import LiveTarget
+E   ModuleNotFoundError: No module named 'scanner'
+___________________ ERROR collecting tests/test_throttle.py ___________________
+ImportError while importing test module 'C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\tests\test_throttle.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\..\AppData\Local\Programs\Python\Python310\lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\test_throttle.py:6: in <module>
+    from scanner.live.throttle import ThrottledRequester
+E   ModuleNotFoundError: No module named 'scanner'
+=========================== short test summary info ===========================
+ERROR test_out.txt - UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff...
+ERROR tests/test_baseline.py
+ERROR tests/test_cli_exit_codes.py
+ERROR tests/test_cli_polish.py
+ERROR tests/test_cli_repo.py
+ERROR tests/test_cli_url.py
+ERROR tests/test_config.py
+ERROR tests/test_core.py
+ERROR tests/test_cors_misconfig.py
+ERROR tests/test_injection_payload_check.py
+ERROR tests/test_payloads.py
+ERROR tests/test_permission.py
+ERROR tests/test_pii_leak_check.py
+ERROR tests/test_plugins.py
+ERROR tests/test_rate_limit_check.py
+ERROR tests/test_redact.py
+ERROR tests/test_report.py
+ERROR tests/test_ssrf_tool_check.py
+ERROR tests/test_throttle.py
+!!!!!!!!!!!!!!!!!! Interrupted: 19 errors during collection !!!!!!!!!!!!!!!!!!!
+============================= 19 errors in 1.20s ==============================
+
+
+STDERR:

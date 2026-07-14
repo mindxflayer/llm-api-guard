@@ -1,0 +1,29 @@
+STDOUT:
+============================= test session starts =============================
+platform win32 -- Python 3.10.1, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\ishaa\OneDrive\Desktop\llm-api-guard
+collected 84 items
+
+tests\test_baseline.py ....                                              [  4%]
+tests\test_cli_exit_codes.py ......                                      [ 11%]
+tests\test_cli_polish.py .....                                           [ 17%]
+tests\test_cli_repo.py .                                                 [ 19%]
+tests\test_cli_url.py ...                                                [ 22%]
+tests\test_config.py ....                                                [ 27%]
+tests\test_core.py ..                                                    [ 29%]
+tests\test_cors_misconfig.py .....                                       [ 35%]
+tests\test_injection_payload_check.py ....                               [ 40%]
+tests\test_payloads.py ....                                              [ 45%]
+tests\test_permission.py .............                                   [ 60%]
+tests\test_pii_leak_check.py ....                                        [ 65%]
+tests\test_plugins.py ........                                           [ 75%]
+tests\test_rate_limit_check.py ....                                      [ 79%]
+tests\test_redact.py ...                                                 [ 83%]
+tests\test_report.py ....                                                [ 88%]
+tests\test_ssrf_tool_check.py ....                                       [ 92%]
+tests\test_throttle.py ......                                            [100%]
+
+============================= 84 passed in 2.37s ==============================
+
+
+STDERR:
