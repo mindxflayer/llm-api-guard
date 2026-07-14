@@ -3,6 +3,7 @@ import re
 import json
 from packaging.version import parse as parse_version
 from scanner.core import Plugin, Finding
+from scanner.osv_client import query_osv_batch
 
 class VulnerableDependencies(Plugin):
     name = "vulnerable_dependencies"
@@ -23,17 +24,8 @@ class VulnerableDependencies(Plugin):
             "package-lock.json"
         ]
 
-        vulnerability_db = {
-            "langchain": [
-                (lambda v: v < parse_version("0.0.236"), "critical", "CVE-2023-36095: RCE via PALChain.from_math_prompt(llm).run passing LLM-generated code to Python's exec() with no AST validation")
-            ],
-            "langchain-core": [
-                (lambda v: (v < parse_version("0.3.81")) or (parse_version("1.0.0") <= v < parse_version("1.2.5")), "critical", "CVE-2025-68664: Serialization injection vulnerability (LangGrinch) allowing object injection and potential secret leakage")
-            ]
-        }
-
-
-
+        to_query = []
+        package_sources = {}
         search_paths = []
         if os.path.isdir(target):
             for item in os.listdir(target):
@@ -51,6 +43,7 @@ class VulnerableDependencies(Plugin):
 
         for path in search_paths:
             filename = os.path.basename(path)
+            ecosystem = "PyPI" if filename in ("requirements.txt", "Pipfile.lock", "poetry.lock", "pyproject.toml") else "npm"
             content = ""
             try:
                 with open(path, "r", encoding="utf-8", errors="ignore") as f:
@@ -59,7 +52,6 @@ class VulnerableDependencies(Plugin):
                 continue
 
             extracted = []
-
             if filename == "requirements.txt":
                 for line in content.splitlines():
                     line = line.strip()
@@ -123,18 +115,73 @@ class VulnerableDependencies(Plugin):
                     pass
 
             for pkg_name, ver in extracted:
-                if pkg_name in vulnerability_db:
-                    try:
-                        v = parse_version(ver)
-                    except Exception:
-                        continue
-                    for checker, sev, desc in vulnerability_db[pkg_name]:
-                        if checker(v):
-                            findings.append(Finding(
-                                rule="vulnerable_dependencies",
-                                severity=sev,
-                                message=f"{pkg_name}=={ver} contains vulnerability: {desc}",
-                                location=f"{os.path.relpath(path, target)}:{pkg_name}=={ver}"
-                            ))
-                            break
+                key = (ecosystem, pkg_name, ver)
+                if key not in package_sources:
+                    package_sources[key] = []
+                    to_query.append(key)
+                if path not in package_sources[key]:
+                    package_sources[key].append(path)
+
+        if not to_query:
+            return findings
+
+        osv_results = query_osv_batch(to_query)
+
+        for key, vulns in osv_results.items():
+            ecosystem, pkg_name, ver = key
+            paths = package_sources.get(key, [])
+            for vuln in vulns:
+                vuln_id = vuln.get("id", "")
+                summary = vuln.get("summary", "")
+                severity = "medium"
+                sev_list = vuln.get("severity")
+                if sev_list:
+                    for entry in sev_list:
+                        score_val = entry.get("score")
+                        if score_val:
+                            try:
+                                score = float(score_val)
+                                if score >= 9.0:
+                                    severity = "critical"
+                                elif score >= 7.0:
+                                    severity = "high"
+                                elif score >= 4.0:
+                                    severity = "medium"
+                                elif score > 0.0:
+                                    severity = "low"
+                                break
+                            except ValueError:
+                                pass
+                else:
+                    db_spec = vuln.get("database_specific")
+                    if db_spec and isinstance(db_spec, dict):
+                        db_sev = db_spec.get("severity")
+                        if isinstance(db_sev, str):
+                            db_sev_lower = db_sev.lower()
+                            if db_sev_lower in ("critical", "high", "medium", "low"):
+                                severity = db_sev_lower
+                            elif db_sev_lower == "moderate":
+                                severity = "medium"
+
+                priority = "normal"
+                keywords = ("rce", "deserialization", "ssrf", "template injection", "pickle", "eval", "exec")
+                full_text = f"{vuln_id} {summary}".lower()
+                if any(kw in full_text for kw in keywords):
+                    priority = "high"
+
+                prefix = "[offline snapshot, may be outdated] " if vuln.get("source") == "offline_snapshot" else ""
+                desc = summary if summary else vuln_id
+                message = f"{prefix}{pkg_name}=={ver} contains vulnerability: {desc}"
+
+                for path in paths:
+                    finding = Finding(
+                        rule="vulnerable_dependencies",
+                        severity=severity,
+                        message=message,
+                        location=f"{os.path.relpath(path, target)}:{pkg_name}=={ver}"
+                    )
+                    finding.priority = priority
+                    findings.append(finding)
+
+        findings.sort(key=lambda f: 0 if getattr(f, "priority", "normal") == "high" else 1)
         return findings

@@ -145,26 +145,63 @@ def test_excessive_agency_plugin():
         shutil.rmtree(temp_good)
 
 def test_vulnerable_dependencies_plugin():
+    from unittest.mock import patch
     from scanner.static.vulnerable_dependencies import VulnerableDependencies
     plugin = VulnerableDependencies()
     temp_bad = tempfile.mkdtemp()
+    mock_bad = {
+        ("PyPI", "langchain", "0.0.235"): [
+            {"id": "CVE-2023-36095", "summary": "RCE via PALChain", "severity": [{"type": "CVSS_V3", "score": "9.8"}], "ranges": []}
+        ]
+    }
     try:
         shutil.copy(os.path.join("tests", "samples", "vulnerable_dependencies", "bad_requirements.txt"), os.path.join(temp_bad, "requirements.txt"))
-        runner = Runner([plugin])
-        findings = runner.run(temp_bad)
-        assert len(findings) >= 1
-        assert any(f.rule == "vulnerable_dependencies" for f in findings)
+        with patch("scanner.static.vulnerable_dependencies.query_osv_batch", return_value=mock_bad) as mock_q:
+            runner = Runner([plugin])
+            findings_bad = runner.run(temp_bad)
+            assert len(findings_bad) >= 1
+            assert any(f.rule == "vulnerable_dependencies" for f in findings_bad)
+            mock_q.assert_called_once()
     finally:
         shutil.rmtree(temp_bad)
 
     temp_good = tempfile.mkdtemp()
     try:
         shutil.copy(os.path.join("tests", "samples", "vulnerable_dependencies", "good_requirements.txt"), os.path.join(temp_good, "requirements.txt"))
-        runner = Runner([plugin])
-        findings = runner.run(temp_good)
-        assert len(findings) == 0
+        with patch("scanner.static.vulnerable_dependencies.query_osv_batch", return_value={}) as mock_q:
+            runner = Runner([plugin])
+            findings_good = runner.run(temp_good)
+            assert len(findings_good) == 0
+            mock_q.assert_called_once()
     finally:
         shutil.rmtree(temp_good)
+
+def test_vulnerable_dependencies_priority():
+    from unittest.mock import patch
+    from scanner.static.vulnerable_dependencies import VulnerableDependencies
+    plugin = VulnerableDependencies()
+    temp_bad = tempfile.mkdtemp()
+    with open(os.path.join(temp_bad, "requirements.txt"), "w") as f:
+        f.write("pkg-a==1.0.0\npkg-b==2.0.0\n")
+    mock_results = {
+        ("PyPI", "pkg-a", "1.0.0"): [
+            {"id": "VULN-A", "summary": "RCE in package", "severity": [{"type": "CVSS_V3", "score": "8.0"}], "ranges": []}
+        ],
+        ("PyPI", "pkg-b", "2.0.0"): [
+            {"id": "VULN-B", "summary": "some generic bug", "severity": [{"type": "CVSS_V3", "score": "5.0"}], "ranges": []}
+        ]
+    }
+    try:
+        with patch("scanner.static.vulnerable_dependencies.query_osv_batch", return_value=mock_results):
+            runner = Runner([plugin])
+            findings = runner.run(temp_bad)
+            assert len(findings) == 2
+            assert findings[0].location.endswith("pkg-a==1.0.0")
+            assert getattr(findings[0], "priority", None) == "high"
+            assert findings[1].location.endswith("pkg-b==2.0.0")
+            assert getattr(findings[1], "priority", None) == "normal"
+    finally:
+        shutil.rmtree(temp_bad)
 
 def test_hardcoded_keys_git_history():
     from scanner.static.hardcoded_keys import HardcodedKeys

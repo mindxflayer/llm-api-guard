@@ -15,13 +15,6 @@ PROBE_PROMPTS = [
 ]
 
 class PiiLeakCheck(Plugin):
-    """
-    Live plugin that sends probe prompts designed to elicit memorized/sensitive data,
-    scanning responses for leaks of PII (emails, US SSNs, secret keys).
-
-    Note: This plugin cannot verify if the leaked data represents real customer databases
-    or is merely a hallucination/fabrication of realistic-looking test samples.
-    """
     name = "pii_leak_check"
     severity = "high"
     owasp_ref = "LLM06"

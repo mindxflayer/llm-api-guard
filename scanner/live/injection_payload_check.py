@@ -5,15 +5,6 @@ from scanner.live.payloads import load_payloads
 from scanner.live.streaming import assemble_response
 
 class InjectionPayloadCheck(Plugin):
-    """
-    Live plugin that sends known jailbreak/prompt injection payloads to a target,
-    checking if the target complies, reflects, or executes them.
-
-    Note: The plugin uses a heuristic default JSON body targeting {"prompt": payload}.
-    Real-world API schemas vary and may require customization in future versions.
-    The pattern-matching detection engine has inherent limitations (false positives/negatives),
-    which is a known design balance rather than a defect.
-    """
     name = "injection_payload_check"
     severity = "high"
     owasp_ref = "LLM01"

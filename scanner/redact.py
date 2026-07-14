@@ -34,5 +34,6 @@ def redact_finding(finding: Finding) -> Finding:
         message=redact_text(finding.message),
         location=redact_text(finding.location),
         suppressed=finding.suppressed,
-        owasp_ref=finding.owasp_ref
+        owasp_ref=finding.owasp_ref,
+        priority=finding.priority
     )

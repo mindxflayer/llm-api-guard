@@ -2,14 +2,6 @@ from scanner.core import Plugin, Finding
 from scanner.live.throttle import ThrottledRequester
 
 class CorsMisconfig(Plugin):
-    """
-    Plugin to check access control and CORS policy configurations on target LLM APIs.
-
-    Note: CORS misconfiguration is a general web/API security check, not strictly unique
-    to LLMs. However, it is especially relevant to LLM APIs that may be exposed to and
-    accessed directly from browser-based environments, as it controls which origins are
-    permitted to make cross-origin requests.
-    """
     name = "cors_misconfig"
     severity = "medium"
     owasp_ref = "LLM02"

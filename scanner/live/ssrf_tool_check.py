@@ -9,13 +9,6 @@ PROBE_PROMPTS = [
 ]
 
 class SsrfToolCheck(Plugin):
-    """
-    Live plugin that sends probe prompts designed to test whether a target's tool-calling
-    exposes server-side request forgery (SSRF).
-
-    Warning: This is an intrusive security scanner check that requires explicit authorization
-    and operator consent. It should default to disabled in config.
-    """
     name = "ssrf_tool_check"
     severity = "high"
     owasp_ref = "LLM08"

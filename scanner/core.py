@@ -17,6 +17,7 @@ class Finding:
     location: str
     suppressed: bool = False
     owasp_ref: str = ""
+    priority: str = "normal"
 
 @dataclass
 class LiveTarget:
