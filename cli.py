@@ -190,7 +190,8 @@ def run_url_scan(args):
         config=config,
         judge_provider=judge_provider,
         target_description=getattr(args, "target_description", None),
-        fast_mode=getattr(args, "fast_mode", False)
+        fast_mode=getattr(args, "fast_mode", False),
+        payload_tier=getattr(args, "payload_tier", "basic")
     )
     findings = runner.run(target)
     
@@ -299,6 +300,7 @@ def main():
     url_parser.add_argument("--config", default="scanner/config.yaml", help="Path to the configuration YAML file")
     url_parser.add_argument("--output", default="report.json", help="Path to write the report findings")
     url_parser.add_argument("--i-have-permission", action="store_true", help="Authorize the live scan immediately without prompt")
+    url_parser.add_argument("--payload-tier", choices=["basic", "mutated", "full"], default="basic", help="Payload tier for prompt injection checks")
     url_parser.add_argument("--checks", default="live", help="Type of checks to run")
     url_parser.add_argument("--baseline", help="Path to baseline JSON file for filtering existing findings")
     url_parser.add_argument("--save-baseline", help="Path to save baseline JSON file")

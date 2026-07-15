@@ -1,7 +1,9 @@
 import os
 import yaml
 
-def load_payloads(path: str = "payloads/injection.yaml") -> list[dict]:
+from payloads.mutations import generate_mutations
+
+def load_payloads(path: str = "payloads/injection.yaml", tier: str = "basic") -> list[dict]:
     if not os.path.exists(path):
         raise ValueError(f"Payload file not found at: {path}")
 
@@ -39,6 +41,22 @@ def load_payloads(path: str = "payloads/injection.yaml") -> list[dict]:
             raise ValueError(
                 f"Entry at index {idx} has invalid category '{category}'. "
                 f"Must be one of: {', '.join(valid_categories)}"
-            )
+                )
 
-    return data
+    if tier == "basic":
+        return data
+    elif tier == "mutated":
+        extended_data = []
+        for entry in data:
+            extended_data.append(entry)
+            extended_data.extend(generate_mutations(entry, techniques=["rot13_wrap"]))
+        return extended_data
+    elif tier == "full":
+        extended_data = []
+        for entry in data:
+            extended_data.append(entry)
+            extended_data.extend(generate_mutations(entry))
+        return extended_data
+    else:
+        raise ValueError(f"Invalid tier: {tier}")
+

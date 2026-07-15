@@ -15,7 +15,8 @@ class InjectionPayloadCheck(Plugin):
         if headers is None:
             headers = {}
 
-        payloads = load_payloads()
+        payload_tier = getattr(self, "payload_tier", "basic")
+        payloads = load_payloads(tier=payload_tier)
         requester = ThrottledRequester(max_requests=len(payloads))
         findings = []
 

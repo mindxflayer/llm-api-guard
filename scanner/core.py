@@ -132,12 +132,13 @@ def filter_findings_by_severity(findings: list[Finding], threshold: str) -> list
     return filtered
 
 class Runner:
-    def __init__(self, plugins: list, config: dict = None, judge_provider = None, target_description = None, fast_mode = False):
+    def __init__(self, plugins: list, config: dict = None, judge_provider = None, target_description = None, fast_mode = False, payload_tier = "basic"):
         self.plugins = plugins
         self.config = config
         self.judge_provider = judge_provider
         self.target_description = target_description
         self.fast_mode = fast_mode
+        self.payload_tier = payload_tier
 
     def run(self, target) -> list[Finding]:
         all_findings = []
@@ -170,6 +171,8 @@ class Runner:
                     plugin_instance.target_description = self.target_description
                 if hasattr(self, "fast_mode"):
                     plugin_instance.fast_mode = self.fast_mode
+                if hasattr(self, "payload_tier"):
+                    plugin_instance.payload_tier = self.payload_tier
 
                 plugin_name = getattr(plugin_instance, "name", plugin_instance.__class__.__name__)
                 if checks is not None:

@@ -1,0 +1,422 @@
+============================= test session starts =============================
+platform win32 -- Python 3.10.1, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\ishaa\OneDrive\Desktop\llm-api-guard
+configfile: pytest.ini
+plugins: anyio-4.11.0, langsmith-0.4.40, asyncio-1.4.0
+asyncio: mode=strict, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 131 items
+
+tests\test_anthropic_provider.py FF.FFF                                  [  4%]
+tests\test_baseline.py ....                                              [  7%]
+tests\test_cli_exit_codes.py ......                                      [ 12%]
+tests\test_cli_polish.py .....                                           [ 16%]
+tests\test_cli_repo.py .                                                 [ 16%]
+tests\test_cli_url.py ...                                                [ 19%]
+tests\test_config.py ....                                                [ 22%]
+tests\test_core.py ..                                                    [ 23%]
+tests\test_cors_misconfig.py .....                                       [ 27%]
+tests\test_entropy.py ......                                             [ 32%]
+tests\test_gemini_provider.py ....                                       [ 35%]
+tests\test_hardcoded_keys.py .....                                       [ 38%]
+tests\test_injection_payload_check.py ....                               [ 41%]
+tests\test_judge_base.py .                                               [ 42%]
+tests\test_judge_cache.py ....                                           [ 45%]
+tests\test_judge_cli_wiring.py ..F.                                      [ 48%]
+tests\test_judge_providers_parity.py F                                   [ 49%]
+tests\test_local_provider.py ..                                          [ 51%]
+tests\test_openai_provider.py ....                                       [ 54%]
+tests\test_osv_client.py .....                                           [ 58%]
+tests\test_payloads.py ....                                              [ 61%]
+tests\test_permission.py .............                                   [ 70%]
+tests\test_pii_leak_check.py ....                                        [ 74%]
+tests\test_plugins.py .........                                          [ 80%]
+tests\test_rate_limit_check.py ....                                      [ 83%]
+tests\test_redact.py ...                                                 [ 86%]
+tests\test_report.py ....                                                [ 89%]
+tests\test_secret_rules_loader.py ....                                   [ 92%]
+tests\test_ssrf_tool_check.py ....                                       [ 95%]
+tests\test_throttle.py ......                                            [100%]
+
+================================== FAILURES ===================================
+_______________________ test_anthropic_provider_success _______________________
+
+    def test_anthropic_provider_success():
+        env_name = "TEST_ANTHROPIC_KEY"
+        env_val = "sk-test-123456789"
+        os.environ[env_name] = env_val
+    
+        try:
+            provider = AnthropicJudgeProvider(
+                model="claude-sonnet-5",
+                api_key_env=env_name,
+                timeout_seconds=45,
+                max_retries=3
+            )
+    
+            mock_client = MagicMock()
+            mock_response = MockResponse([
+                MockBlock("text", None, None),
+                MockBlock("tool_use", "submit_judgment", {
+                    "verdict": "true_positive",
+                    "confidence": 92,
+                    "exploit_explanation": "Contains prompt injection payload",
+                    "suggested_fix": "Implement strict validation schema",
+                    "severity_adjustment": "high"
+                })
+            ])
+            mock_client.messages.create.return_value = mock_response
+    
+>           with patch("anthropic.Anthropic", return_value=mock_client) as mock_auth_cls:
+
+tests\test_anthropic_provider.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1421: in __enter__
+    self.target = self.getter()
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1608: in <lambda>
+    getter = lambda: _importer(target)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+target = 'anthropic'
+
+    def _importer(target):
+        components = target.split('.')
+        import_path = components.pop(0)
+>       thing = __import__(import_path)
+E       ModuleNotFoundError: No module named 'anthropic'
+
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1247: ModuleNotFoundError
+_________________ test_anthropic_provider_custom_api_key_env __________________
+
+    def test_anthropic_provider_custom_api_key_env():
+        env_name = "MY_SPECIAL_KEY_VAR"
+        env_val = "sk-special-value"
+        os.environ[env_name] = env_val
+    
+        try:
+            provider = AnthropicJudgeProvider(
+                model="claude-sonnet-5",
+                api_key_env=env_name
+            )
+    
+            mock_client = MagicMock()
+            mock_response = MockResponse([
+                MockBlock("tool_use", "submit_judgment", {
+                    "verdict": "false_positive",
+                    "confidence": 80,
+                    "exploit_explanation": "Safe mock snippet",
+                    "suggested_fix": "None"
+                })
+            ])
+            mock_client.messages.create.return_value = mock_response
+    
+>           with patch("anthropic.Anthropic", return_value=mock_client) as mock_auth_cls:
+
+tests\test_anthropic_provider.py:85: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1421: in __enter__
+    self.target = self.getter()
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1608: in <lambda>
+    getter = lambda: _importer(target)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+target = 'anthropic'
+
+    def _importer(target):
+        components = target.split('.')
+        import_path = components.pop(0)
+>       thing = __import__(import_path)
+E       ModuleNotFoundError: No module named 'anthropic'
+
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1247: ModuleNotFoundError
+_________________ test_anthropic_provider_malformed_response __________________
+
+    def test_anthropic_provider_malformed_response():
+        env_name = "TEST_ANTHROPIC_KEY"
+        os.environ[env_name] = "dummy_key"
+    
+        try:
+            provider = AnthropicJudgeProvider(
+                model="claude-sonnet-5",
+                api_key_env=env_name
+            )
+    
+            mock_client = MagicMock()
+            mock_response = MockResponse([
+                MockBlock("tool_use", "submit_judgment", {
+                    "verdict": "true_positive"
+                })
+            ])
+            mock_client.messages.create.return_value = mock_response
+    
+>           with patch("anthropic.Anthropic", return_value=mock_client):
+
+tests\test_anthropic_provider.py:127: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1421: in __enter__
+    self.target = self.getter()
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1608: in <lambda>
+    getter = lambda: _importer(target)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+target = 'anthropic'
+
+    def _importer(target):
+        components = target.split('.')
+        import_path = components.pop(0)
+>       thing = __import__(import_path)
+E       ModuleNotFoundError: No module named 'anthropic'
+
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1247: ModuleNotFoundError
+___________________ test_anthropic_provider_no_tool_called ____________________
+
+    def test_anthropic_provider_no_tool_called():
+        env_name = "TEST_ANTHROPIC_KEY"
+        os.environ[env_name] = "dummy_key"
+    
+        try:
+            provider = AnthropicJudgeProvider(
+                model="claude-sonnet-5",
+                api_key_env=env_name
+            )
+    
+            mock_client = MagicMock()
+            mock_response = MockResponse([
+                MockBlock("text", None, None)
+            ])
+            mock_client.messages.create.return_value = mock_response
+    
+>           with patch("anthropic.Anthropic", return_value=mock_client):
+
+tests\test_anthropic_provider.py:155: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1421: in __enter__
+    self.target = self.getter()
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1608: in <lambda>
+    getter = lambda: _importer(target)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+target = 'anthropic'
+
+    def _importer(target):
+        components = target.split('.')
+        import_path = components.pop(0)
+>       thing = __import__(import_path)
+E       ModuleNotFoundError: No module named 'anthropic'
+
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1247: ModuleNotFoundError
+_____________ test_anthropic_provider_api_error_graceful_handling _____________
+
+    def test_anthropic_provider_api_error_graceful_handling():
+        env_name = "TEST_ANTHROPIC_KEY"
+        os.environ[env_name] = "dummy_key"
+    
+        try:
+            provider = AnthropicJudgeProvider(
+                model="claude-sonnet-5",
+                api_key_env=env_name
+            )
+    
+            mock_client = MagicMock()
+            mock_client.messages.create.side_effect = Exception("Anthropic API rate limit reached")
+    
+>           with patch("anthropic.Anthropic", return_value=mock_client):
+
+tests\test_anthropic_provider.py:180: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1421: in __enter__
+    self.target = self.getter()
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1608: in <lambda>
+    getter = lambda: _importer(target)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+target = 'anthropic'
+
+    def _importer(target):
+        components = target.split('.')
+        import_path = components.pop(0)
+>       thing = __import__(import_path)
+E       ModuleNotFoundError: No module named 'anthropic'
+
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1247: ModuleNotFoundError
+_________ test_no_llm_verify_prevents_outbound_and_sdk_instantiation __________
+
+    def test_no_llm_verify_prevents_outbound_and_sdk_instantiation():
+        config = {
+            "judge": {
+                "enabled": True,
+                "provider": "openai",
+                "model": "gpt-4",
+                "api_key_env": "OPENAI_API_KEY",
+            }
+        }
+    
+        cli_overrides = {"no_llm_verify": True}
+    
+>       with patch("openai.OpenAI") as mock_openai, \
+             patch("anthropic.Anthropic") as mock_anthropic, \
+             patch("google.generativeai.configure") as mock_gemini:
+
+tests\test_judge_cli_wiring.py:52: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1421: in __enter__
+    self.target = self.getter()
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1608: in <lambda>
+    getter = lambda: _importer(target)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+target = 'anthropic'
+
+    def _importer(target):
+        components = target.split('.')
+        import_path = components.pop(0)
+>       thing = __import__(import_path)
+E       ModuleNotFoundError: No module named 'anthropic'
+
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1247: ModuleNotFoundError
+_______________________ test_all_providers_shape_parity _______________________
+
+    def test_all_providers_shape_parity():
+        os.environ["DUMMY_KEY"] = "sk-dummy"
+        try:
+            anthropic_prov = AnthropicJudgeProvider(model="claude-sonnet", api_key_env="DUMMY_KEY")
+            mock_anthropic_client = MagicMock()
+            mock_anthropic_client.messages.create.return_value = MockResponseAnthropic([
+                MockBlock("tool_use", "submit_judgment", {
+                    "verdict": "true_positive",
+                    "confidence": 90,
+                    "exploit_explanation": "explanation",
+                    "suggested_fix": "fix",
+                    "severity_adjustment": "high"
+                })
+            ])
+>           with patch("anthropic.Anthropic", return_value=mock_anthropic_client):
+
+tests\test_judge_providers_parity.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1421: in __enter__
+    self.target = self.getter()
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1608: in <lambda>
+    getter = lambda: _importer(target)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+target = 'anthropic'
+
+    def _importer(target):
+        components = target.split('.')
+        import_path = components.pop(0)
+>       thing = __import__(import_path)
+E       ModuleNotFoundError: No module named 'anthropic'
+
+..\..\..\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1247: ModuleNotFoundError
+============================== warnings summary ===============================
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(p8e-(?i)[a-z0-9]{' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(LTAI(?i)[a-z0-9]{' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b((?:sc|ext|scauth|' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\bcurl\\b(?:.*?|.*?(?' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'dp\\.pt\\.(?i)[a-z0-9]' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'duffel_(?:test|live)' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'dt0c01\\.(?i)[a-z0-9]' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\bEZAK(?i)[a-z0-9]{5' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\bEZTK(?i)[a-z0-9]{5' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(EAA[MC](?i)[a-z0-' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'FLWSECK_TEST-(?i)[a-' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'FLWPUBK_TEST-(?i)[a-' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'fio-u-(?i)[a-z0-9\\-_' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '(?i)[\\w.-]{0,50}?(?:' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(s-s4t2(?:ud|af)-(' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'lin_api_(?i)[a-z0-9]' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(pscale_tkn_(?i)[\\' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '(?i)\\b(pscale_pw_(?i' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(PMAK-(?i)[a-f0-9]' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(SG\\.(?i)[a-z0-9=_' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(xkeysib-[a-f0-9]{' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_gemini_provider.py::test_gemini_provider_success
+  C:\Users\ishaa\AppData\Local\Programs\Python\Python310\lib\site-packages\google\api_core\_python_version_support.py:275: FutureWarning: You are using a Python version (3.10.1) which Google will stop supporting in new releases of google.api_core once it reaches its end of life (2026-10-04). Please upgrade to the latest Python version, or at least Python 3.11, to continue receiving updates for google.api_core past that date.
+    warnings.warn(message, FutureWarning)
+
+tests/test_gemini_provider.py::test_gemini_provider_success
+  C:\Users\ishaa\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1240: FutureWarning: 
+  
+  All support for the `google.generativeai` package has ended. It will no longer be receiving 
+  updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+  See README for more details:
+  
+  https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+  
+    __import__(import_path)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_anthropic_provider.py::test_anthropic_provider_success - Mo...
+FAILED tests/test_anthropic_provider.py::test_anthropic_provider_custom_api_key_env
+FAILED tests/test_anthropic_provider.py::test_anthropic_provider_malformed_response
+FAILED tests/test_anthropic_provider.py::test_anthropic_provider_no_tool_called
+FAILED tests/test_anthropic_provider.py::test_anthropic_provider_api_error_graceful_handling
+FAILED tests/test_judge_cli_wiring.py::test_no_llm_verify_prevents_outbound_and_sdk_instantiation
+FAILED tests/test_judge_providers_parity.py::test_all_providers_shape_parity
+================= 7 failed, 124 passed, 25 warnings in 20.19s =================

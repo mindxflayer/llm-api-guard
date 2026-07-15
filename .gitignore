@@ -18,3 +18,10 @@ env/
 # YAML and IDE configurations
 .vscode/
 .idea/
+
+# Logs and pytest config
+*.log
+.llm-api-guard-audit.log
+logs/
+pytest.ini
+
