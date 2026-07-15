@@ -1,11 +1,16 @@
 import re
 from scanner.core import Finding
-from scanner.static.hardcoded_keys import OPENAI_RE, AWS_RE, BEARER_RE, ENV_RE
+from scanner.static.hardcoded_keys import OPENAI_RE, AWS_RE
+
+BEARER_RE = re.compile(r'(?i)\bbearer\s+([a-zA-Z0-9_\-\.\~]{15,})')
+ENV_RE = re.compile(r'\b[A-Za-z0-9_]+\s*=\s*[\'"]?([a-zA-Z0-9_\-\.\~\@\#\$\%\^\&\*\+\=]{8,})[\'"]?')
+
 
 def redact_secret(value: str) -> str:
     if len(value) < 8:
         return "*" * len(value)
     return value[:3] + "*" * (len(value) - 7) + value[-4:]
+
 
 def redact_finding(finding: Finding) -> Finding:
     def redact_text(text: str) -> str:
@@ -35,5 +40,6 @@ def redact_finding(finding: Finding) -> Finding:
         location=redact_text(finding.location),
         suppressed=finding.suppressed,
         owasp_ref=finding.owasp_ref,
-        priority=finding.priority
+        priority=finding.priority,
+        detection_method=getattr(finding, "detection_method", "regex")
     )

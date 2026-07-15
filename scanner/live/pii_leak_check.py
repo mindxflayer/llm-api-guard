@@ -2,7 +2,9 @@ import re
 from scanner.core import Plugin, Finding
 from scanner.live.throttle import ThrottledRequester
 from scanner.live.streaming import assemble_response
-from scanner.static.hardcoded_keys import OPENAI_RE, AWS_RE, BEARER_RE
+from scanner.static.hardcoded_keys import OPENAI_RE, AWS_RE
+
+BEARER_RE = re.compile(r'(?i)\bbearer\s+([a-zA-Z0-9_\-\.\~]{15,})')
 
 EMAIL_RE = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
 SSN_RE = re.compile(r'\b\d{3}-\d{2}-\d{4}\b')

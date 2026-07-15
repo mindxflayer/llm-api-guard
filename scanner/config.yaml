@@ -15,3 +15,6 @@ live_checks:
   ssrf_tool_check: false
 severity_threshold: medium
 require_permission_ack: true
+
+secret_detection:
+  entropy_threshold: 70

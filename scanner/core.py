@@ -18,6 +18,7 @@ class Finding:
     suppressed: bool = False
     owasp_ref: str = ""
     priority: str = "normal"
+    detection_method: str = "regex"
 
 @dataclass
 class LiveTarget:
