@@ -18,3 +18,12 @@ require_permission_ack: true
 
 secret_detection:
   entropy_threshold: 70
+
+judge:
+  enabled: false
+  provider: none
+  model: claude-sonnet-5
+  api_key_env: ANTHROPIC_API_KEY
+  base_url: null
+  timeout_seconds: 30
+  max_retries: 2
