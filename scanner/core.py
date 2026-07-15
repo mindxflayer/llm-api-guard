@@ -126,9 +126,10 @@ def filter_findings_by_severity(findings: list[Finding], threshold: str) -> list
     return filtered
 
 class Runner:
-    def __init__(self, plugins: list, config: dict = None):
+    def __init__(self, plugins: list, config: dict = None, judge_provider = None):
         self.plugins = plugins
         self.config = config
+        self.judge_provider = judge_provider
 
     def run(self, target) -> list[Finding]:
         all_findings = []
@@ -154,6 +155,9 @@ class Runner:
                 else:
                     logger.warning(f"Skipping invalid plugin item: {plugin_item}")
                     continue
+
+                if self.judge_provider is not None:
+                    plugin_instance.judge_provider = self.judge_provider
 
                 plugin_name = getattr(plugin_instance, "name", plugin_instance.__class__.__name__)
                 if checks is not None:

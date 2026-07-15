@@ -22,6 +22,10 @@ class JudgeProvider(ABC):
                 if provider_name == "none":
                     return orig_judge(self, finding_context)
 
+                if getattr(self, "redact_before_send", False):
+                    from scanner.judge.redact import redact_finding_context
+                    finding_context = redact_finding_context(finding_context)
+
                 model_name = getattr(self, "model", "unknown")
                 rule = finding_context.get("rule", "")
                 snippet = (

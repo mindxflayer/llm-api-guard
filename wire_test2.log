@@ -1,0 +1,118 @@
+============================= test session starts =============================
+platform win32 -- Python 3.10.1, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\ishaa\OneDrive\Desktop\llm-api-guard
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collecting ... collected 4 items
+
+tests/test_judge_cli_wiring.py::test_build_judge_provider_none_and_no_llm_verify PASSED [ 25%]
+tests/test_judge_cli_wiring.py::test_build_judge_provider_override PASSED [ 50%]
+tests/test_judge_cli_wiring.py::test_no_llm_verify_prevents_outbound_and_sdk_instantiation PASSED [ 75%]
+tests/test_judge_cli_wiring.py::test_redact_before_send PASSED           [100%]
+
+============================== warnings summary ===============================
+tests/test_judge_cli_wiring.py::test_no_llm_verify_prevents_outbound_and_sdk_instantiation
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\venv\lib\site-packages\google\api_core\_python_version_support.py:255: FutureWarning: You are using a Python version (3.10.1) which Google will stop supporting in new releases of google.api_core once it reaches its end of life (2026-10-04). Please upgrade to the latest Python version, or at least Python 3.11, to continue receiving updates for google.api_core past that date.
+    warnings.warn(message, FutureWarning)
+
+tests/test_judge_cli_wiring.py::test_no_llm_verify_prevents_outbound_and_sdk_instantiation
+  C:\Users\ishaa\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1240: FutureWarning: 
+  
+  All support for the `google.generativeai` package has ended. It will no longer be receiving 
+  updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+  See README for more details:
+  
+  https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+  
+    __import__(import_path)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(p8e-(?i)[a-z0-9]{' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(LTAI(?i)[a-z0-9]{' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b((?:sc|ext|scauth|' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\bcurl\\b(?:.*?|.*?(?' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'dp\\.pt\\.(?i)[a-z0-9]' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'duffel_(?:test|live)' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'dt0c01\\.(?i)[a-z0-9]' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\bEZAK(?i)[a-z0-9]{5' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\bEZTK(?i)[a-z0-9]{5' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(EAA[MC](?i)[a-z0-' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'FLWSECK_TEST-(?i)[a-' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'FLWPUBK_TEST-(?i)[a-' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'fio-u-(?i)[a-z0-9\\-_' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '(?i)[\\w.-]{0,50}?(?:' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(s-s4t2(?:ud|af)-(' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'lin_api_(?i)[a-z0-9]' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(pscale_tkn_(?i)[\\' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '(?i)\\b(pscale_pw_(?i' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(PMAK-(?i)[a-f0-9]' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(SG\\.(?i)[a-z0-9=_' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_judge_cli_wiring.py::test_redact_before_send
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(xkeysib-[a-f0-9]{' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 4 passed, 25 warnings in 7.25s ========================
+

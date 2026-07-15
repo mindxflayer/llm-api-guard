@@ -56,7 +56,18 @@ def run_repo_scan(args):
     plugins_dir = os.path.join(base_dir, "scanner", "static")
     
     plugins = loader.load_plugins(plugins_dir)
-    runner = Runner(plugins, config=config)
+    
+    cli_overrides = {
+        "judge_provider": getattr(args, "judge_provider", None),
+        "judge_model": getattr(args, "judge_model", None),
+        "judge_base_url": getattr(args, "judge_base_url", None),
+        "no_llm_verify": getattr(args, "no_llm_verify", False),
+        "redact_before_send": getattr(args, "redact_before_send", False)
+    }
+    from scanner.judge import build_judge_provider
+    judge_provider = build_judge_provider(config, cli_overrides)
+    
+    runner = Runner(plugins, config=config, judge_provider=judge_provider)
     findings = runner.run(args.repo)
     
     baseline_used = bool(getattr(args, "baseline", None))
@@ -152,13 +163,23 @@ def run_url_scan(args):
         print("Scan refused: Live scanning requires authorization.")
         sys.exit(1)
 
+    cli_overrides = {
+        "judge_provider": getattr(args, "judge_provider", None),
+        "judge_model": getattr(args, "judge_model", None),
+        "judge_base_url": getattr(args, "judge_base_url", None),
+        "no_llm_verify": getattr(args, "no_llm_verify", False),
+        "redact_before_send": getattr(args, "redact_before_send", False)
+    }
+    from scanner.judge import build_judge_provider
+    judge_provider = build_judge_provider(config, cli_overrides)
+
     target = LiveTarget(url=args.url, headers=headers)
     loader = PluginLoader()
     base_dir = os.path.dirname(os.path.abspath(__file__))
     plugins_dir = os.path.join(base_dir, "scanner", "live")
     
     plugins = loader.load_plugins(plugins_dir)
-    runner = Runner(plugins, config=config)
+    runner = Runner(plugins, config=config, judge_provider=judge_provider)
     findings = runner.run(target)
     
     baseline_used = bool(getattr(args, "baseline", None))
@@ -252,6 +273,11 @@ def main():
     repo_parser.add_argument("--fail-on", choices=["low", "medium", "high", "critical"], help="Severity threshold to trigger a non-zero exit code")
     repo_parser.add_argument("--fail-on-new", action="store_true", help="Only fail on new findings not present in the baseline")
     repo_parser.add_argument("--format", default="json", help="Report output formats (supports comma-separated list, e.g. json,html,sarif)")
+    repo_parser.add_argument("--judge-provider", choices=["anthropic", "openai", "gemini", "local", "none"], help="Override config judge provider")
+    repo_parser.add_argument("--judge-model", help="Override config judge model")
+    repo_parser.add_argument("--judge-base-url", help="Override config judge base URL (meaningful for local provider only)")
+    repo_parser.add_argument("--no-llm-verify", action="store_true", help="Force judge provider to 'none' and make zero outbound calls")
+    repo_parser.add_argument("--redact-before-send", action="store_true", help="Redact code context, comments, and secrets before judge analysis")
     
     url_parser = subparsers.add_parser("url", help="Scan a live API url")
     url_parser.add_argument("--url", required=True, help="URL of the live LLM API endpoint to scan")
@@ -265,6 +291,11 @@ def main():
     url_parser.add_argument("--fail-on", choices=["low", "medium", "high", "critical"], help="Severity threshold to trigger a non-zero exit code")
     url_parser.add_argument("--fail-on-new", action="store_true", help="Only fail on new findings not present in the baseline")
     url_parser.add_argument("--format", default="json", help="Report output formats (supports comma-separated list, e.g. json,html,sarif)")
+    url_parser.add_argument("--judge-provider", choices=["anthropic", "openai", "gemini", "local", "none"], help="Override config judge provider")
+    url_parser.add_argument("--judge-model", help="Override config judge model")
+    url_parser.add_argument("--judge-base-url", help="Override config judge base URL (meaningful for local provider only)")
+    url_parser.add_argument("--no-llm-verify", action="store_true", help="Force judge provider to 'none' and make zero outbound calls")
+    url_parser.add_argument("--redact-before-send", action="store_true", help="Redact code context, comments, and secrets before judge analysis")
     
     args = parser.parse_args()
     
