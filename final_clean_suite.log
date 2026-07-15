@@ -1,0 +1,245 @@
+============================= test session starts =============================
+platform win32 -- Python 3.10.1, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\ishaa\OneDrive\Desktop\llm-api-guard
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collecting ... collected 131 items
+
+tests/test_anthropic_provider.py::test_anthropic_provider_success PASSED [  0%]
+tests/test_anthropic_provider.py::test_anthropic_provider_custom_api_key_env PASSED [  1%]
+tests/test_anthropic_provider.py::test_anthropic_provider_missing_api_key PASSED [  2%]
+tests/test_anthropic_provider.py::test_anthropic_provider_malformed_response PASSED [  3%]
+tests/test_anthropic_provider.py::test_anthropic_provider_no_tool_called PASSED [  3%]
+tests/test_anthropic_provider.py::test_anthropic_provider_api_error_graceful_handling PASSED [  4%]
+tests/test_baseline.py::test_inline_suppression_checking PASSED          [  5%]
+tests/test_baseline.py::test_baseline_io_roundtrip PASSED                [  6%]
+tests/test_baseline.py::test_filter_new_findings PASSED                  [  6%]
+tests/test_baseline.py::test_runner_integration_with_inline_and_baseline PASSED [  7%]
+tests/test_cli_exit_codes.py::test_no_fail_on_exits_zero PASSED          [  8%]
+tests/test_cli_exit_codes.py::test_fail_on_severity_exceeds_exits_one PASSED [  9%]
+tests/test_cli_exit_codes.py::test_fail_on_severity_below_exits_zero PASSED [  9%]
+tests/test_cli_exit_codes.py::test_fail_on_suppressed_ignored PASSED     [ 10%]
+tests/test_cli_exit_codes.py::test_fail_on_new_without_baseline_usage_error PASSED [ 11%]
+tests/test_cli_exit_codes.py::test_fail_on_new_with_baseline PASSED      [ 12%]
+tests/test_cli_polish.py::test_version_flag PASSED                       [ 12%]
+tests/test_cli_polish.py::test_nonexistent_repo PASSED                   [ 13%]
+tests/test_cli_polish.py::test_nonexistent_config PASSED                 [ 14%]
+tests/test_cli_polish.py::test_invalid_fail_on PASSED                    [ 15%]
+tests/test_cli_polish.py::test_invalid_url_scheme PASSED                 [ 16%]
+tests/test_cli_repo.py::test_repo_scan_cli_logic PASSED                  [ 16%]
+tests/test_cli_url.py::test_url_command_unauthorized_exit PASSED         [ 17%]
+tests/test_cli_url.py::test_url_command_authorized_runner_execution PASSED [ 18%]
+tests/test_cli_url.py::test_url_command_ssrf_disabled_by_default PASSED  [ 19%]
+tests/test_config.py::test_load_config_valid PASSED                      [ 19%]
+tests/test_config.py::test_load_config_invalid PASSED                    [ 20%]
+tests/test_config.py::test_filter_findings_by_severity PASSED            [ 21%]
+tests/test_config.py::test_runner_disable_plugin_by_config PASSED        [ 22%]
+tests/test_core.py::test_plugin_loader_discovery PASSED                  [ 22%]
+tests/test_core.py::test_runner_exception_handling PASSED                [ 23%]
+tests/test_cors_misconfig.py::test_cors_wildcard_with_credentials PASSED [ 24%]
+tests/test_cors_misconfig.py::test_cors_wildcard_no_credentials PASSED   [ 25%]
+tests/test_cors_misconfig.py::test_cors_reflected_origin PASSED          [ 25%]
+tests/test_cors_misconfig.py::test_cors_safe_or_absent PASSED            [ 26%]
+tests/test_cors_misconfig.py::test_cors_unreachable PASSED               [ 27%]
+tests/test_entropy.py::test_shannon_entropy_calculation PASSED           [ 28%]
+tests/test_entropy.py::test_secret_likelihood_score_realistic_token PASSED [ 29%]
+tests/test_entropy.py::test_secret_likelihood_score_english_phrase PASSED [ 29%]
+tests/test_entropy.py::test_secret_likelihood_score_short_string PASSED  [ 30%]
+tests/test_entropy.py::test_secret_likelihood_score_repeated PASSED      [ 31%]
+tests/test_entropy.py::test_uuid_validation PASSED                       [ 32%]
+tests/test_gemini_provider.py::test_gemini_provider_success PASSED       [ 32%]
+tests/test_gemini_provider.py::test_gemini_provider_missing_key PASSED   [ 33%]
+tests/test_gemini_provider.py::test_gemini_provider_malformed_response PASSED [ 34%]
+tests/test_gemini_provider.py::test_gemini_provider_api_error PASSED     [ 35%]
+tests/test_hardcoded_keys.py::test_openai_and_aws_keys PASSED            [ 35%]
+tests/test_hardcoded_keys.py::test_ruleset_anthropic_key PASSED          [ 36%]
+tests/test_hardcoded_keys.py::test_entropy_high_entropy_token PASSED     [ 37%]
+tests/test_hardcoded_keys.py::test_uuid_assigned_variable_not_flagged PASSED [ 38%]
+tests/test_hardcoded_keys.py::test_test_fixtures_stricter_entropy_filtering PASSED [ 38%]
+tests/test_injection_payload_check.py::test_judge_true_positive_success PASSED [ 39%]
+tests/test_injection_payload_check.py::test_judge_false_positive_no_finding PASSED [ 40%]
+tests/test_injection_payload_check.py::test_judge_true_positive_below_confidence PASSED [ 41%]
+tests/test_injection_payload_check.py::test_fast_mode_pre_filter PASSED  [ 41%]
+tests/test_judge_base.py::test_noop_provider_returns_default PASSED      [ 42%]
+tests/test_judge_cache.py::test_cache_key_generation PASSED              [ 43%]
+tests/test_judge_cache.py::test_cache_get_set_roundtrip PASSED           [ 44%]
+tests/test_judge_cache.py::test_cache_mock_provider_call_count PASSED    [ 45%]
+tests/test_judge_cache.py::test_cache_different_provider_or_model PASSED [ 45%]
+tests/test_judge_cli_wiring.py::test_build_judge_provider_none_and_no_llm_verify PASSED [ 46%]
+tests/test_judge_cli_wiring.py::test_build_judge_provider_override PASSED [ 47%]
+tests/test_judge_cli_wiring.py::test_no_llm_verify_prevents_outbound_and_sdk_instantiation PASSED [ 48%]
+tests/test_judge_cli_wiring.py::test_redact_before_send PASSED           [ 48%]
+tests/test_judge_providers_parity.py::test_all_providers_shape_parity PASSED [ 49%]
+tests/test_local_provider.py::test_local_provider_success PASSED         [ 50%]
+tests/test_local_provider.py::test_local_provider_no_credentials PASSED  [ 51%]
+tests/test_openai_provider.py::test_openai_provider_success PASSED       [ 51%]
+tests/test_openai_provider.py::test_openai_provider_missing_key PASSED   [ 52%]
+tests/test_openai_provider.py::test_openai_provider_malformed_response PASSED [ 53%]
+tests/test_openai_provider.py::test_openai_provider_api_error PASSED     [ 54%]
+tests/test_osv_client.py::test_successful_query_format PASSED            [ 54%]
+tests/test_osv_client.py::test_cache_hit_skips_network PASSED            [ 55%]
+tests/test_osv_client.py::test_network_failure_expired_cache PASSED      [ 56%]
+tests/test_osv_client.py::test_network_failure_no_cache_offline_fallback PASSED [ 57%]
+tests/test_osv_client.py::test_real_network_call_sanity PASSED           [ 58%]
+tests/test_payloads.py::test_load_payloads_success PASSED                [ 58%]
+tests/test_payloads.py::test_load_payloads_missing_field PASSED          [ 59%]
+tests/test_payloads.py::test_load_payloads_invalid_category PASSED       [ 60%]
+tests/test_payloads.py::test_load_payloads_nonexistent_file PASSED       [ 61%]
+tests/test_permission.py::test_confirm_authorization_permission_flag_true PASSED [ 61%]
+tests/test_permission.py::test_confirm_authorization_interactive_false_no_permission PASSED [ 62%]
+tests/test_permission.py::test_confirm_authorization_interactive_prompt[y-True-GRANTED] PASSED [ 63%]
+tests/test_permission.py::test_confirm_authorization_interactive_prompt[yes-True-GRANTED] PASSED [ 64%]
+tests/test_permission.py::test_confirm_authorization_interactive_prompt[YES-True-GRANTED] PASSED [ 64%]
+tests/test_permission.py::test_confirm_authorization_interactive_prompt[y -True-GRANTED] PASSED [ 65%]
+tests/test_permission.py::test_confirm_authorization_interactive_prompt[n-False-DENIED] PASSED [ 66%]
+tests/test_permission.py::test_confirm_authorization_interactive_prompt[no-False-DENIED] PASSED [ 67%]
+tests/test_permission.py::test_confirm_authorization_interactive_prompt[-False-DENIED] PASSED [ 67%]
+tests/test_permission.py::test_confirm_authorization_interactive_prompt[   -False-DENIED] PASSED [ 68%]
+tests/test_permission.py::test_confirm_authorization_interactive_prompt[anything_else-False-DENIED] PASSED [ 69%]
+tests/test_permission.py::test_confirm_authorization_keyboard_interrupt PASSED [ 70%]
+tests/test_permission.py::test_log_authorization_appends_and_overwrites_not PASSED [ 70%]
+tests/test_pii_leak_check.py::test_non_streaming_pii_match PASSED        [ 71%]
+tests/test_pii_leak_check.py::test_non_streaming_no_pii PASSED           [ 72%]
+tests/test_pii_leak_check.py::test_streaming_pii_match PASSED            [ 73%]
+tests/test_pii_leak_check.py::test_pii_request_timeout PASSED            [ 74%]
+tests/test_plugins.py::test_hardcoded_keys_plugin PASSED                 [ 74%]
+tests/test_plugins.py::test_unsafe_output_exec_plugin PASSED             [ 75%]
+tests/test_plugins.py::test_prompt_injection_flow_plugin PASSED          [ 76%]
+tests/test_plugins.py::test_missing_input_validation_plugin PASSED       [ 77%]
+tests/test_plugins.py::test_system_prompt_leak_plugin PASSED             [ 77%]
+tests/test_plugins.py::test_excessive_agency_plugin PASSED               [ 78%]
+tests/test_plugins.py::test_vulnerable_dependencies_plugin PASSED        [ 79%]
+tests/test_plugins.py::test_vulnerable_dependencies_priority PASSED      [ 80%]
+tests/test_plugins.py::test_hardcoded_keys_git_history PASSED            [ 80%]
+tests/test_rate_limit_check.py::test_rate_limit_not_observed PASSED      [ 81%]
+tests/test_rate_limit_check.py::test_rate_limit_observed_429 PASSED      [ 82%]
+tests/test_rate_limit_check.py::test_rate_limit_observed_headers PASSED  [ 83%]
+tests/test_rate_limit_check.py::test_rate_limit_target_unreachable PASSED [ 83%]
+tests/test_redact.py::test_redact_secret_direct PASSED                   [ 84%]
+tests/test_redact.py::test_redact_finding_direct PASSED                  [ 85%]
+tests/test_redact.py::test_runner_redaction_integration PASSED           [ 86%]
+tests/test_report.py::test_write_json_report PASSED                      [ 87%]
+tests/test_report.py::test_write_html_report PASSED                      [ 87%]
+tests/test_report.py::test_cli_format_option PASSED                      [ 88%]
+tests/test_report.py::test_write_sarif_report PASSED                     [ 89%]
+tests/test_secret_rules_loader.py::test_load_ruleset_success PASSED      [ 90%]
+tests/test_secret_rules_loader.py::test_load_ruleset_missing_file PASSED [ 90%]
+tests/test_secret_rules_loader.py::test_load_ruleset_malformed_file PASSED [ 91%]
+tests/test_secret_rules_loader.py::test_load_ruleset_anthropic_pattern PASSED [ 92%]
+tests/test_ssrf_tool_check.py::test_ssrf_non_streaming_success PASSED    [ 93%]
+tests/test_ssrf_tool_check.py::test_ssrf_non_streaming_refusal PASSED    [ 93%]
+tests/test_ssrf_tool_check.py::test_ssrf_streaming_success PASSED        [ 94%]
+tests/test_ssrf_tool_check.py::test_ssrf_timeout PASSED                  [ 95%]
+tests/test_throttle.py::test_clamp_max_requests PASSED                   [ 96%]
+tests/test_throttle.py::test_request_cap_stops_execution PASSED          [ 96%]
+tests/test_throttle.py::test_minimum_delay_respected PASSED              [ 97%]
+tests/test_throttle.py::test_exponential_backoff_on_5xx_and_gives_up PASSED [ 98%]
+tests/test_throttle.py::test_exponential_backoff_on_connection_error PASSED [ 99%]
+tests/test_throttle.py::test_overall_run_timeout PASSED                  [100%]
+
+============================== warnings summary ===============================
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(p8e-(?i)[a-z0-9]{' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(LTAI(?i)[a-z0-9]{' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b((?:sc|ext|scauth|' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\bcurl\\b(?:.*?|.*?(?' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'dp\\.pt\\.(?i)[a-z0-9]' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'duffel_(?:test|live)' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'dt0c01\\.(?i)[a-z0-9]' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\bEZAK(?i)[a-z0-9]{5' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\bEZTK(?i)[a-z0-9]{5' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(EAA[MC](?i)[a-z0-' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'FLWSECK_TEST-(?i)[a-' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'FLWPUBK_TEST-(?i)[a-' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'fio-u-(?i)[a-z0-9\\-_' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '(?i)[\\w.-]{0,50}?(?:' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(s-s4t2(?:ud|af)-(' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression 'lin_api_(?i)[a-z0-9]' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(pscale_tkn_(?i)[\\' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '(?i)\\b(pscale_pw_(?i' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(PMAK-(?i)[a-f0-9]' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(SG\\.(?i)[a-z0-9=_' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_cli_repo.py::test_repo_scan_cli_logic
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\scanner\secret_rules\loader.py:61: DeprecationWarning: Flags not at the start of the expression '\\b(xkeysib-[a-f0-9]{' (truncated)
+    compiled = re.compile(cleaned_regex)
+
+tests/test_gemini_provider.py::test_gemini_provider_success
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\venv\lib\site-packages\google\api_core\_python_version_support.py:255: FutureWarning: You are using a Python version (3.10.1) which Google will stop supporting in new releases of google.api_core once it reaches its end of life (2026-10-04). Please upgrade to the latest Python version, or at least Python 3.11, to continue receiving updates for google.api_core past that date.
+    warnings.warn(message, FutureWarning)
+
+tests/test_gemini_provider.py::test_gemini_provider_success
+  C:\Users\ishaa\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1240: FutureWarning: 
+  
+  All support for the `google.generativeai` package has ended. It will no longer be receiving 
+  updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+  See README for more details:
+  
+  https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+  
+    __import__(import_path)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+====================== 131 passed, 25 warnings in 11.49s ======================
+

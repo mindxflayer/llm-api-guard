@@ -67,7 +67,13 @@ def run_repo_scan(args):
     from scanner.judge import build_judge_provider
     judge_provider = build_judge_provider(config, cli_overrides)
     
-    runner = Runner(plugins, config=config, judge_provider=judge_provider)
+    runner = Runner(
+        plugins,
+        config=config,
+        judge_provider=judge_provider,
+        target_description=getattr(args, "target_description", None),
+        fast_mode=getattr(args, "fast_mode", False)
+    )
     findings = runner.run(args.repo)
     
     baseline_used = bool(getattr(args, "baseline", None))
@@ -179,7 +185,13 @@ def run_url_scan(args):
     plugins_dir = os.path.join(base_dir, "scanner", "live")
     
     plugins = loader.load_plugins(plugins_dir)
-    runner = Runner(plugins, config=config, judge_provider=judge_provider)
+    runner = Runner(
+        plugins,
+        config=config,
+        judge_provider=judge_provider,
+        target_description=getattr(args, "target_description", None),
+        fast_mode=getattr(args, "fast_mode", False)
+    )
     findings = runner.run(target)
     
     baseline_used = bool(getattr(args, "baseline", None))
@@ -278,6 +290,8 @@ def main():
     repo_parser.add_argument("--judge-base-url", help="Override config judge base URL (meaningful for local provider only)")
     repo_parser.add_argument("--no-llm-verify", action="store_true", help="Force judge provider to 'none' and make zero outbound calls")
     repo_parser.add_argument("--redact-before-send", action="store_true", help="Redact code context, comments, and secrets before judge analysis")
+    repo_parser.add_argument("--target-description", help="Description of the target context/purpose for LLM judge")
+    repo_parser.add_argument("--fast-mode", action="store_true", help="Enable lightweight pre-filtering to skip obviously clean responses")
     
     url_parser = subparsers.add_parser("url", help="Scan a live API url")
     url_parser.add_argument("--url", required=True, help="URL of the live LLM API endpoint to scan")
@@ -296,6 +310,8 @@ def main():
     url_parser.add_argument("--judge-base-url", help="Override config judge base URL (meaningful for local provider only)")
     url_parser.add_argument("--no-llm-verify", action="store_true", help="Force judge provider to 'none' and make zero outbound calls")
     url_parser.add_argument("--redact-before-send", action="store_true", help="Redact code context, comments, and secrets before judge analysis")
+    url_parser.add_argument("--target-description", help="Description of the target context/purpose for LLM judge")
+    url_parser.add_argument("--fast-mode", action="store_true", help="Enable lightweight pre-filtering to skip obviously clean responses")
     
     args = parser.parse_args()
     

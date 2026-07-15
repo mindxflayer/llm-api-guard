@@ -10,7 +10,9 @@ checks:
 live_checks:
   rate_limit_check: true
   cors_misconfig: true
-  injection_payload_check: false
+  injection_payload_check:
+    enabled: false
+    min_confidence: 70
   pii_leak_check: false
   ssrf_tool_check: false
 severity_threshold: medium

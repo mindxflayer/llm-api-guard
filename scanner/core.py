@@ -100,7 +100,10 @@ def load_config(path: str) -> dict:
         raise ValueError("checks must be a dictionary")
 
     for k, v in data["checks"].items():
-        if not isinstance(v, bool):
+        if isinstance(v, dict):
+            if "enabled" in v and not isinstance(v["enabled"], bool):
+                raise ValueError(f"Check status for {k}.enabled must be boolean")
+        elif not isinstance(v, bool):
             raise ValueError(f"Check status for {k} must be boolean")
 
     if "live_checks" not in data:
@@ -109,7 +112,10 @@ def load_config(path: str) -> dict:
         raise ValueError("live_checks must be a dictionary")
 
     for k, v in data["live_checks"].items():
-        if not isinstance(v, bool):
+        if isinstance(v, dict):
+            if "enabled" in v and not isinstance(v["enabled"], bool):
+                raise ValueError(f"Check status for {k}.enabled must be boolean")
+        elif not isinstance(v, bool):
             raise ValueError(f"Check status for {k} must be boolean")
 
     return data
@@ -126,10 +132,12 @@ def filter_findings_by_severity(findings: list[Finding], threshold: str) -> list
     return filtered
 
 class Runner:
-    def __init__(self, plugins: list, config: dict = None, judge_provider = None):
+    def __init__(self, plugins: list, config: dict = None, judge_provider = None, target_description = None, fast_mode = False):
         self.plugins = plugins
         self.config = config
         self.judge_provider = judge_provider
+        self.target_description = target_description
+        self.fast_mode = fast_mode
 
     def run(self, target) -> list[Finding]:
         all_findings = []
@@ -158,10 +166,20 @@ class Runner:
 
                 if self.judge_provider is not None:
                     plugin_instance.judge_provider = self.judge_provider
+                if hasattr(self, "target_description"):
+                    plugin_instance.target_description = self.target_description
+                if hasattr(self, "fast_mode"):
+                    plugin_instance.fast_mode = self.fast_mode
 
                 plugin_name = getattr(plugin_instance, "name", plugin_instance.__class__.__name__)
                 if checks is not None:
-                    if plugin_name not in checks or not checks[plugin_name]:
+                    if plugin_name not in checks:
+                        continue
+                    chk_val = checks[plugin_name]
+                    if isinstance(chk_val, dict):
+                        if not chk_val.get("enabled", False):
+                            continue
+                    elif not chk_val:
                         continue
 
                 logger.info(f"Running plugin: {plugin_name}")
