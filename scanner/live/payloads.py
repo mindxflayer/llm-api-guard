@@ -14,7 +14,7 @@ def load_payloads(path: str = "payloads/injection.yaml") -> list[dict]:
     if not isinstance(data, list):
         raise ValueError("Invalid format: top-level elements must be a list")
 
-    required_fields = {"id", "category", "payload", "detection_hint", "severity"}
+    required_fields = {"id", "category", "intent", "payload", "owasp_ref", "severity", "source"}
     valid_categories = {
         "instruction_override",
         "role_play_bypass",

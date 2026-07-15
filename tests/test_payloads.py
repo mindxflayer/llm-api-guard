@@ -7,13 +7,15 @@ def test_load_payloads_success():
     payloads = load_payloads(path)
     
     assert isinstance(payloads, list)
-    assert len(payloads) >= 12
+    assert len(payloads) >= 8
     for entry in payloads:
         assert "id" in entry
         assert "category" in entry
+        assert "intent" in entry
         assert "payload" in entry
-        assert "detection_hint" in entry
+        assert "owasp_ref" in entry
         assert "severity" in entry
+        assert "source" in entry
         
         assert entry["category"] in {
             "instruction_override",

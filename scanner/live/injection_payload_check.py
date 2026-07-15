@@ -55,7 +55,7 @@ class InjectionPayloadCheck(Plugin):
                     "location": url,
                     "context_val": (
                         f"Target Declared Purpose: {getattr(self, 'target_description', None) or 'A standard conversational LLM endpoint'}\n"
-                        f"Attack Intent / Goal: {p.get('intent') or p.get('detection_hint', '')}\n"
+                        f"Attack Intent / Goal: {p.get('intent', '')}\n"
                         f"Response Transcript:\n{response_text}"
                     )
                 }
@@ -74,7 +74,7 @@ class InjectionPayloadCheck(Plugin):
 
     def _pre_filter_match(self, response_text: str, payload: dict) -> bool:
         response_lower = response_text.lower()
-        hint = payload.get("detection_hint", "").lower()
+        hint = payload.get("intent", "").lower()
         category = payload.get("category", "")
 
         quote_match = re.search(r"'(.*?)'", hint)
