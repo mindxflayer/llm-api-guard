@@ -10,6 +10,7 @@ class LocalOpenAICompatibleJudgeProvider(JudgeProvider):
         self.api_key_env = api_key_env
         self.timeout_seconds = timeout_seconds
         self.max_retries = max_retries
+        self.provider_name = "local"
 
     def judge(self, finding_context: dict) -> JudgeResult:
         api_key = "dummy_key"
