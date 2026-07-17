@@ -1,10 +1,13 @@
 import os
 import re
+import logging
 
 try:
     import tomllib
 except ImportError:
     import tomli as tomllib
+
+logger = logging.getLogger("llm-api-guard")
 
 
 def _clean_regex(pattern: str) -> str:
@@ -28,6 +31,13 @@ def _clean_regex(pattern: str) -> str:
         cleaned = cleaned.replace(posix, py_regex)
         
     cleaned = cleaned.replace(r"\z", r"\Z")
+
+    flag_matches = re.findall(r"\(\?([aimsx]+)\)", cleaned)
+    if flag_matches:
+        all_flags = "".join(sorted(set("".join(flag_matches))))
+        cleaned = re.sub(r"\(\?([aimsx]+)\)", "", cleaned)
+        cleaned = f"(?{all_flags}){cleaned}"
+
     return cleaned
 
 
@@ -56,11 +66,12 @@ def load_ruleset(path: str = "scanner/secret_rules/gitleaks.toml") -> list[dict]
         if not raw_regex:
             continue
             
-        cleaned_regex = _clean_regex(raw_regex)
         try:
+            cleaned_regex = _clean_regex(raw_regex)
             compiled = re.compile(cleaned_regex)
-        except re.error as e:
-            raise ValueError(f"Failed to compile regex for rule '{rule_id}': {e}")
+        except (re.error, ValueError) as e:
+            logger.info(f"Skipping rule '{rule_id}' due to regex compilation failure: {e}")
+            continue
             
         tags = rule.get("tags", [])
         keywords = rule.get("keywords", [])

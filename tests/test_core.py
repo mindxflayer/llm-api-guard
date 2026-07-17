@@ -54,3 +54,23 @@ def test_runner_exception_handling():
     assert len(findings) == 1
     assert findings[0].rule == "success_rule"
     assert findings[0].location == "test_target"
+
+
+def test_runner_init_exception_handling():
+    class SuccessPlugin(Plugin):
+        name = "success"
+        def run(self, target):
+            return [Finding("success_rule", "info", "Success msg", target)]
+            
+    class BrokenInitPlugin(Plugin):
+        name = "broken_init"
+        def __init__(self):
+            raise ValueError("Failure during plugin initialization")
+        def run(self, target):
+            return []
+            
+    runner = Runner([SuccessPlugin(), BrokenInitPlugin])
+    findings = runner.run("test_target")
+    
+    assert len(findings) == 1
+    assert findings[0].rule == "success_rule"

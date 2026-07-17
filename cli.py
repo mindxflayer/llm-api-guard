@@ -1,8 +1,22 @@
 import os
 import argparse
 import sys
+import logging
 from scanner.core import load_config, PluginLoader, Runner, LiveTarget, Finding
 from scanner.report import write_json_report, write_html_report, write_sarif_report
+
+def setup_logging(verbose: bool):
+    logger = logging.getLogger("llm-api-guard")
+    if verbose:
+        logger.setLevel(logging.INFO)
+    else:
+        logger.setLevel(logging.WARNING)
+        
+    if not logger.handlers:
+        handler = logging.StreamHandler(sys.stderr)
+        formatter = logging.Formatter("[%(levelname)s] %(message)s")
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
 from scanner.live import confirm_authorization
 from scanner.baseline import load_baseline, save_baseline, filter_new_findings
 
@@ -38,6 +52,7 @@ def determine_exit_code(findings: list[Finding], fail_on: str = None, fail_on_ne
         return 0, summary
 
 def run_repo_scan(args):
+    setup_logging(getattr(args, "verbose", False))
     if getattr(args, "config", None) and not os.path.exists(args.config):
         print(f"Error: Config file '{args.config}' does not exist.")
         sys.exit(1)
@@ -139,6 +154,7 @@ def run_repo_scan(args):
         sys.exit(code)
 
 def run_url_scan(args):
+    setup_logging(getattr(args, "verbose", False))
     if getattr(args, "config", None) and not os.path.exists(args.config):
         print(f"Error: Config file '{args.config}' does not exist.")
         sys.exit(1)
@@ -293,6 +309,7 @@ def main():
     repo_parser.add_argument("--redact-before-send", action="store_true", help="Redact code context, comments, and secrets before judge analysis")
     repo_parser.add_argument("--target-description", help="Description of the target context/purpose for LLM judge")
     repo_parser.add_argument("--fast-mode", action="store_true", help="Enable lightweight pre-filtering to skip obviously clean responses")
+    repo_parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose logging")
     
     url_parser = subparsers.add_parser("url", help="Scan a live API url")
     url_parser.add_argument("--url", required=True, help="URL of the live LLM API endpoint to scan")
@@ -314,6 +331,7 @@ def main():
     url_parser.add_argument("--redact-before-send", action="store_true", help="Redact code context, comments, and secrets before judge analysis")
     url_parser.add_argument("--target-description", help="Description of the target context/purpose for LLM judge")
     url_parser.add_argument("--fast-mode", action="store_true", help="Enable lightweight pre-filtering to skip obviously clean responses")
+    url_parser.add_argument("--verbose", "-v", action="store_true", help="Enable verbose logging")
     
     args = parser.parse_args()
     

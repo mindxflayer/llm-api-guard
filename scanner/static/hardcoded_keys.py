@@ -83,6 +83,27 @@ def _load_entropy_threshold() -> int:
     return 70
 
 
+import logging
+
+logger = logging.getLogger("llm-api-guard")
+
+
+def _load_min_rules_threshold() -> int:
+    config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config.yaml")
+    if os.path.exists(config_path):
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                data = yaml.safe_load(f)
+                if isinstance(data, dict):
+                    sec_det = data.get("secret_detection", {})
+                    min_rules = sec_det.get("min_rules")
+                    if min_rules is not None:
+                        return int(min_rules)
+        except Exception:
+            pass
+    return 150
+
+
 class HardcodedKeys(Plugin):
     name = "hardcoded_keys"
     severity = "critical"
@@ -91,11 +112,16 @@ class HardcodedKeys(Plugin):
     def __init__(self, full_history: bool = False):
         self.full_history = full_history
         self.threshold = _load_entropy_threshold()
+        self.min_rules = _load_min_rules_threshold()
         rules_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "secret_rules", "gitleaks.toml")
         try:
             self.rules = load_ruleset(rules_path)
-        except Exception:
+        except Exception as e:
+            logger.warning(f"Failed to load secret ruleset: {e}")
             self.rules = []
+            
+        if len(self.rules) < self.min_rules:
+            raise ValueError(f"Loaded ruleset rule count ({len(self.rules)}) is below the required minimum of {self.min_rules}.")
 
     def run(self, target: str) -> list[Finding]:
         findings = []

@@ -20,6 +20,7 @@ require_permission_ack: true
 
 secret_detection:
   entropy_threshold: 70
+  min_rules: 150
 
 judge:
   enabled: false

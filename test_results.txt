@@ -1,0 +1,58 @@
+============================= test session starts =============================
+platform win32 -- Python 3.10.1, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\ishaa\OneDrive\Desktop\llm-api-guard
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collected 145 items
+
+tests\test_anthropic_provider.py ......                                  [  4%]
+tests\test_baseline.py ....                                              [  6%]
+tests\test_cli_exit_codes.py ......                                      [ 11%]
+tests\test_cli_polish.py .....                                           [ 14%]
+tests\test_cli_repo.py .                                                 [ 15%]
+tests\test_cli_url.py ...                                                [ 17%]
+tests\test_config.py ....                                                [ 20%]
+tests\test_core.py ...                                                   [ 22%]
+tests\test_cors_misconfig.py .....                                       [ 25%]
+tests\test_entropy.py ......                                             [ 29%]
+tests\test_gemini_provider.py ....                                       [ 32%]
+tests\test_hardcoded_keys.py .......                                     [ 37%]
+tests\test_injection_payload_check.py ....                               [ 40%]
+tests\test_judge_base.py .                                               [ 40%]
+tests\test_judge_cache.py ....                                           [ 43%]
+tests\test_judge_cli_wiring.py ....                                      [ 46%]
+tests\test_judge_providers_parity.py .                                   [ 46%]
+tests\test_local_provider.py ..                                          [ 48%]
+tests\test_mutations.py .........                                        [ 54%]
+tests\test_openai_provider.py ....                                       [ 57%]
+tests\test_osv_client.py .....                                           [ 60%]
+tests\test_payloads.py ....                                              [ 63%]
+tests\test_permission.py .............                                   [ 72%]
+tests\test_pii_leak_check.py ....                                        [ 75%]
+tests\test_plugins.py .........                                          [ 81%]
+tests\test_rate_limit_check.py ....                                      [ 84%]
+tests\test_redact.py ...                                                 [ 86%]
+tests\test_report.py ....                                                [ 88%]
+tests\test_secret_rules_loader.py ......                                 [ 93%]
+tests\test_ssrf_tool_check.py ....                                       [ 95%]
+tests\test_throttle.py ......                                            [100%]
+
+============================== warnings summary ===============================
+tests/test_gemini_provider.py::test_gemini_provider_success
+  C:\Users\ishaa\OneDrive\Desktop\llm-api-guard\venv\lib\site-packages\google\api_core\_python_version_support.py:255: FutureWarning: You are using a Python version (3.10.1) which Google will stop supporting in new releases of google.api_core once it reaches its end of life (2026-10-04). Please upgrade to the latest Python version, or at least Python 3.11, to continue receiving updates for google.api_core past that date.
+    warnings.warn(message, FutureWarning)
+
+tests/test_gemini_provider.py::test_gemini_provider_success
+  C:\Users\ishaa\AppData\Local\Programs\Python\Python310\lib\unittest\mock.py:1240: FutureWarning: 
+  
+  All support for the `google.generativeai` package has ended. It will no longer be receiving 
+  updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+  See README for more details:
+  
+  https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+  
+    __import__(import_path)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+====================== 145 passed, 2 warnings in 13.89s =======================
+

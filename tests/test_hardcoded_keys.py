@@ -102,3 +102,16 @@ def test_test_fixtures_stricter_entropy_filtering():
         assert findings[0].detection_method == "entropy"
     finally:
         shutil.rmtree(temp_dir)
+
+
+def test_hardcoded_keys_startup_self_check_passes():
+    plugin = HardcodedKeys()
+    assert len(plugin.rules) >= 150
+
+
+def test_hardcoded_keys_startup_self_check_fails():
+    from unittest.mock import patch
+    import pytest
+    with patch("scanner.static.hardcoded_keys._load_min_rules_threshold", return_value=300):
+        with pytest.raises(ValueError, match="Loaded ruleset rule count .* is below the required minimum of 300"):
+            HardcodedKeys()
