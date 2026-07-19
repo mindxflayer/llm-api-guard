@@ -16,6 +16,9 @@ live_checks:
     min_confidence: 70
   pii_leak_check: false
   ssrf_tool_check: false
+  indirect_injection_probe: false
+indirect_injection:
+  fixtures: []
 severity_threshold: medium
 require_permission_ack: true
 

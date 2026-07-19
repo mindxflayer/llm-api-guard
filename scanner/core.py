@@ -174,6 +174,7 @@ class Runner:
                     plugin_instance.fast_mode = self.fast_mode
                 if hasattr(self, "payload_tier"):
                     plugin_instance.payload_tier = self.payload_tier
+                plugin_instance.config = self.config
 
                 plugin_name = getattr(plugin_instance, "name", plugin_instance.__class__.__name__)
                 if checks is not None:
