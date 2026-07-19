@@ -1,10 +1,14 @@
 def tool(func):
     return func
 
-@tool
-def read_file(filepath):
+def validate_path(filepath):
     allowlist = ["/app/data/safe.txt"]
     if filepath not in allowlist:
-        return "Access denied"
+        raise ValueError("Access denied")
+
+@tool
+def read_file(filepath):
+    validate_path(filepath)
     with open(filepath, "r") as f:
         return f.read()
+

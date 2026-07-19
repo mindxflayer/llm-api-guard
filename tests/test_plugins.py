@@ -244,6 +244,110 @@ def test_hardcoded_keys_git_history():
             func(path)
         shutil.rmtree(temp_dir, onerror=make_writable)
 
+def test_excessive_agency_sanitize_variable_bypass():
+    from scanner.static.excessive_agency import ExcessiveAgency
+    plugin = ExcessiveAgency()
+    temp_dir = tempfile.mkdtemp()
+    try:
+        code = """
+def tool(func):
+    return func
+
+@tool
+def read_file(filepath):
+    sanitize_but_not_actually_called = True
+    with open(filepath, "r") as f:
+        return f.read()
+"""
+        with open(os.path.join(temp_dir, "bad.py"), "w", encoding="utf-8") as f:
+            f.write(code)
+        findings = plugin.run(temp_dir)
+        assert len(findings) >= 1
+        assert any(f.rule == "excessive_agency" for f in findings)
+    finally:
+        shutil.rmtree(temp_dir)
+
+def test_excessive_agency_cross_module_validator():
+    from scanner.static.excessive_agency import ExcessiveAgency
+    plugin = ExcessiveAgency()
+    temp_dir = tempfile.mkdtemp()
+    try:
+        module_b = """
+def verify_ok(x):
+    if not isinstance(x, str):
+        raise ValueError("Bad input")
+    return x
+"""
+        module_a = """
+from .module_b import verify_ok
+def tool(func):
+    return func
+
+@tool
+def read_file(filepath):
+    verify_ok(filepath)
+    with open(filepath, "r") as f:
+        return f.read()
+"""
+        os.makedirs(os.path.join(temp_dir, "app"), exist_ok=True)
+        with open(os.path.join(temp_dir, "app", "module_b.py"), "w", encoding="utf-8") as f:
+            f.write(module_b)
+        with open(os.path.join(temp_dir, "app", "module_a.py"), "w", encoding="utf-8") as f:
+            f.write(module_a)
+        findings = plugin.run(temp_dir)
+        assert len(findings) == 0
+    finally:
+        shutil.rmtree(temp_dir)
+
+def test_excessive_agency_regex_regression():
+    from scanner.static.excessive_agency import ExcessiveAgency
+    plugin = ExcessiveAgency()
+    temp_dir = tempfile.mkdtemp()
+    try:
+        code = """
+def tool(func):
+    return func
+
+@tool
+def read_file(filepath):
+    sanitize_input_totally_not_really = "safe"
+    with open(filepath, "r") as f:
+        return f.read()
+"""
+        with open(os.path.join(temp_dir, "bad.py"), "w", encoding="utf-8") as f:
+            f.write(code)
+        findings = plugin.run(temp_dir)
+        assert len(findings) >= 1
+    finally:
+        shutil.rmtree(temp_dir)
+
+def test_excessive_agency_pydantic_library():
+    from scanner.static.excessive_agency import ExcessiveAgency
+    plugin = ExcessiveAgency()
+    temp_dir = tempfile.mkdtemp()
+    try:
+        code = """
+def tool(func):
+    return func
+
+class PathModel:
+    def __init__(self, filepath):
+        self.filepath = filepath
+
+@tool
+def read_file(filepath):
+    p = PathModel(filepath=filepath)
+    with open(filepath, "r") as f:
+        return f.read()
+"""
+        with open(os.path.join(temp_dir, "bad.py"), "w", encoding="utf-8") as f:
+            f.write(code)
+        findings = plugin.run(temp_dir)
+        assert len(findings) == 0
+    finally:
+        shutil.rmtree(temp_dir)
+
+
 
 
 

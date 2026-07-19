@@ -1,6 +1,68 @@
 import os
 import ast
 from scanner.core import Plugin, Finding
+from scanner.dataflow.callgraph import CallGraph, FunctionRef
+
+def is_exception_raising_validator(callee_body) -> bool:
+    callee_params = {arg.arg for arg in callee_body.args.args}
+    for node in ast.walk(callee_body):
+        if isinstance(node, ast.If):
+            test_names = {n.id for n in ast.walk(node.test) if isinstance(n, ast.Name)}
+            if test_names.intersection(callee_params):
+                for child in ast.walk(node):
+                    if isinstance(child, ast.Raise):
+                        return True
+    return False
+
+def returns_boolean(callee_body) -> bool:
+    for node in ast.walk(callee_body):
+        if isinstance(node, ast.Return):
+            val = node.value
+            if isinstance(val, ast.Constant) and isinstance(val.value, bool):
+                return True
+            if isinstance(val, ast.Compare):
+                return True
+    return False
+
+def is_call_used_in_conditional(caller_def, call_node) -> bool:
+    for node in ast.walk(caller_def):
+        if isinstance(node, ast.If):
+            if any(child is call_node for child in ast.walk(node.test)):
+                return True
+                
+    assigned_vars = set()
+    for node in ast.walk(caller_def):
+        if isinstance(node, ast.Assign):
+            if node.value is call_node:
+                for tgt in node.targets:
+                    if isinstance(tgt, ast.Name):
+                        assigned_vars.add(tgt.id)
+    
+    if assigned_vars:
+        for node in ast.walk(caller_def):
+            if isinstance(node, ast.If):
+                test_vars = {n.id for n in ast.walk(node.test) if isinstance(n, ast.Name)}
+                if test_vars.intersection(assigned_vars):
+                    return True
+    return False
+
+def is_validation_library_call(call_node, filepath, cg) -> bool:
+    func = call_node.func
+    if isinstance(func, ast.Attribute):
+        if func.attr in ("model_validate", "validate", "load"):
+            return True
+            
+    if isinstance(func, ast.Name):
+        name = func.id
+        if name in ("Validator", "Schema") or name.endswith("Model") or name.endswith("Validator") or name.endswith("Schema"):
+            return True
+        resolved = cg._resolve_name_source(name, filepath)
+        if resolved:
+            src_file, src_name = resolved
+            if src_name in ("Validator", "Schema") or src_name.endswith("Model") or src_name.endswith("Validator") or src_name.endswith("Schema"):
+                return True
+                
+    return False
 
 class ExcessiveAgency(Plugin):
 
@@ -12,6 +74,9 @@ class ExcessiveAgency(Plugin):
         findings = []
         if not os.path.exists(target):
             return findings
+
+        cg = CallGraph()
+        cg.build(target)
 
         for root, dirs, files in os.walk(target):
             dirs[:] = [d for d in dirs if d not in ('.git', 'node_modules', 'venv', '__pycache__')]
@@ -26,6 +91,7 @@ class ExcessiveAgency(Plugin):
                 except Exception:
                     continue
 
+                rel_filepath = os.path.relpath(filepath, target).replace("\\", "/")
                 tool_functions = set()
 
                 for sub in ast.walk(tree):
@@ -66,20 +132,28 @@ class ExcessiveAgency(Plugin):
                         if not is_tool:
                             continue
 
-                        params = {arg.arg for arg in sub.args.args}
-
                         has_validation = False
                         for body_node in ast.walk(sub):
-                            if isinstance(body_node, ast.Name) and any(x in body_node.id.lower() for x in ("allowlist", "whitelist", "sanitize", "secure", "check_path", "validate")):
-                                has_validation = True
-                                break
-                            if isinstance(body_node, ast.Attribute) and any(x in body_node.attr.lower() for x in ("allowlist", "whitelist", "sanitize", "secure", "check_path", "validate")):
-                                has_validation = True
-                                break
+                            if isinstance(body_node, ast.Call):
+                                if is_validation_library_call(body_node, filepath, cg):
+                                    has_validation = True
+                                    break
+                                
+                                callee_ref = cg.resolve_call(body_node, filepath, FunctionRef(file_path=rel_filepath, name=sub.name))
+                                if callee_ref:
+                                    callee_body = cg.get_function_body(callee_ref)
+                                    if callee_body:
+                                        if is_exception_raising_validator(callee_body):
+                                            has_validation = True
+                                            break
+                                        if returns_boolean(callee_body) and is_call_used_in_conditional(sub, body_node):
+                                            has_validation = True
+                                            break
 
                         if has_validation:
                             continue
 
+                        params = {arg.arg for arg in sub.args.args}
                         has_danger = False
                         for body_node in ast.walk(sub):
                             if isinstance(body_node, ast.Call):
