@@ -1,0 +1,89 @@
+Scanning 84 Python files...
+
+========================================
+FILE: .\cli.py
+  Docstrings: 1 found
+
+========================================
+FILE: .\scanner\baseline.py
+  Comments count: 3
+    Line 79: if prev_line.startswith("#"):
+    Line 84: if "#" in line_clean:
+    Line 85: comment = line_clean.split("#", 1)[1].strip().lower()
+
+========================================
+FILE: .\scanner\redact.py
+  Comments count: 1
+    Line 6: ENV_RE = re.compile(r'\b[A-Za-z0-9_]+\s*=\s*[\'"]?([a-zA-Z0-9_\-\.\~\@\#\$\%\^\&\*\+\=]{8,})[\'"]?')
+
+========================================
+FILE: .\scanner\report.py
+  Docstrings: 1 found
+  Comments count: 17
+    Line 11: body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #333; margin: 20px; line-height: 1.5; }
+    Line 12: h1 { border-bottom: 2px solid #eee; padding-bottom: 10px; }
+    Line 13: .summary { background: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #ddd; }
+    Line 16: .stat-critical { background: #ffebeb; border-color: #ffc2c2; color: #cc0000; }
+    Line 17: .stat-high { background: #fff3e6; border-color: #ffe0b2; color: #e65100; }
+    Line 18: .stat-medium { background: #fffde7; border-color: #fff9c4; color: #f57f17; }
+    Line 19: .stat-low { background: #f0f4c3; border-color: #e6ee9c; color: #827717; }
+    Line 20: .stat-total { background: #f5f5f5; border-color: #e0e0e0; color: #333; }
+    Line 22: .category-header { background: #eaeaea; padding: 8px 12px; font-weight: bold; font-size: 1.1em; border-radius: 4px; }
+    Line 24: .finding-table th, .finding-table td { padding: 8px 12px; border: 1px solid #ddd; text-align: left; vertical-align: top; }
+
+========================================
+FILE: .\scanner\judge\redact.py
+  Docstrings: 4 found
+  Comments count: 1
+    Line 96: text = re.sub(r'#.*', '[REDACTED_COMMENT]', text)
+
+========================================
+FILE: .\scanner\static\hardcoded_keys.py
+  Comments count: 2
+    Line 201: if line_stripped and not line_stripped.startswith("#"):
+    Line 299: if line_stripped and not line_stripped.startswith("#"):
+
+========================================
+FILE: .\scanner\static\vulnerable_dependencies.py
+  Comments count: 1
+    Line 58: if not line or line.startswith("#"):
+
+========================================
+FILE: .\tests\test_baseline.py
+  Docstrings: 2 found
+  Comments count: 3
+    Line 18: key = "sk-12345" # scanner: ignore openai_key
+    Line 20: # scanner: ignore bearer_token
+    Line 83: content = """secret1 = "sk-1234567890" # scanner: ignore openai_key
+
+========================================
+FILE: .\tests\test_cli_repo.py
+  Docstrings: 1 found
+
+========================================
+FILE: .\tests\test_cli_url.py
+  Docstrings: 2 found
+
+========================================
+FILE: .\tests\test_config.py
+  Docstrings: 4 found
+
+========================================
+FILE: .\tests\test_core.py
+  Docstrings: 1 found
+
+========================================
+FILE: .\tests\test_hardcoded_keys.py
+  Comments count: 3
+    Line 56: f.write('api_token = "aB1c_D2eF3gH4iJ5k#$@*L6mN7oP8qR"\n')
+    Line 94: f.write('api_token = "token-123456789-abcdefg#$@*"\n')
+    Line 95: f.write('secret_key = "aB1c_D2eF3gH4iJ5k#$@*L6mN7oP8qRaB1c_D2eF3gH4iJ5k#$@*L6mN7oP8qR"\n')
+
+========================================
+FILE: .\tests\test_judge_cli_wiring.py
+  Comments count: 1
+    Line 128: "snippet": "secret = 'sk-12345678901234567890'\n# This is a comment\nx = \"hello world\""
+
+========================================
+FILE: .\tests\test_secret_rules_loader.py
+  Docstrings: 1 found

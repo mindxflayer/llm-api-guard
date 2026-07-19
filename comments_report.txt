@@ -1,0 +1,393 @@
+
+========================================
+FILE: .\payloads\mutations.py
+  Docstrings:
+    Line 20: "'а'..."
+    Line 20: "'е'..."
+    Line 20: "'і'..."
+    Line 20: "'о'..."
+    Line 20: "'с'..."
+    Line 20: "'р'..."
+    Line 20: "'ѕ'..."
+    Line 21: "'А'..."
+    Line 21: "'Е'..."
+    Line 21: "'І'..."
+    Line 21: "'О'..."
+    Line 21: "'С'..."
+    Line 21: "'Р'..."
+    Line 78: 'f"{seed[\'id\']}_mut_{tech}"...'
+    Line 84: 'f"{seed[\'source\']}+mutation:{tech}"...'
+
+========================================
+FILE: .\scanner\osv_client.py
+  Docstrings:
+    Line 79: '"offline_snapshot"...'
+
+========================================
+FILE: .\scanner\report.py
+  Docstrings:
+    Line 155: '"https://github.com/OWASP/www-project-top-10-for-l...'
+    Line 160: '"error"...'
+    Line 161: '"error"...'
+    Line 162: '"warning"...'
+    Line 163: '"note"...'
+    Line 206: '"member"...'
+    Line 223: '"external"...'
+    Line 224: '"accepted"...'
+    Line 233: '"llm-api-guard"...'
+    Line 235: '"https://github.com/mindxflayer/llm-api-guard"...'
+    Line 243: '"https://schemastore.azurewebsites.net/schemas/jso...'
+    Line 244: '"2.1.0"...'
+
+========================================
+FILE: .\scanner\judge\anthropic_provider.py
+  Docstrings:
+    Line 49: '"user"...'
+    Line 51: '"submit_judgment"...'
+    Line 52: '"Submit a structured security judgment for a findi...'
+    Line 54: '"object"...'
+    Line 57: '"string"...'
+    Line 61: '"integer"...'
+    Line 66: '"string"...'
+    Line 69: '"string"...'
+    Line 72: '"string"...'
+    Line 79: '"tool"...'
+    Line 79: '"submit_judgment"...'
+
+========================================
+FILE: .\scanner\judge\gemini_provider.py
+  Docstrings:
+    Line 47: '"OBJECT"...'
+    Line 50: '"STRING"...'
+    Line 54: '"INTEGER"...'
+    Line 57: '"STRING"...'
+    Line 60: '"STRING"...'
+    Line 63: '"STRING"...'
+
+========================================
+FILE: .\scanner\judge\local_openai_compatible_provider.py
+  Docstrings:
+    Line 51: '"system"...'
+    Line 51: '"You are a precise security reviewer judge."...'
+    Line 52: '"user"...'
+    Line 55: '"function"...'
+    Line 57: '"submit_judgment"...'
+    Line 58: '"Submit a structured security judgment for a findi...'
+    Line 60: '"object"...'
+    Line 63: '"string"...'
+    Line 67: '"integer"...'
+    Line 72: '"string"...'
+    Line 75: '"string"...'
+    Line 78: '"string"...'
+    Line 86: '"function"...'
+    Line 86: '"submit_judgment"...'
+
+========================================
+FILE: .\scanner\judge\openai_provider.py
+  Docstrings:
+    Line 48: '"system"...'
+    Line 48: '"You are a precise security reviewer judge."...'
+    Line 49: '"user"...'
+    Line 52: '"function"...'
+    Line 54: '"submit_judgment"...'
+    Line 55: '"Submit a structured security judgment for a findi...'
+    Line 57: '"object"...'
+    Line 60: '"string"...'
+    Line 64: '"integer"...'
+    Line 69: '"string"...'
+    Line 72: '"string"...'
+    Line 75: '"string"...'
+    Line 83: '"function"...'
+    Line 83: '"submit_judgment"...'
+
+========================================
+FILE: .\scanner\live\injection_payload_check.py
+  Docstrings:
+    Line 54: '"injection_payload_check"...'
+    Line 55: 'f"Prompt injection compliance detected for payload...'
+
+========================================
+FILE: .\scanner\secret_rules\loader.py
+  Docstrings:
+    Line 18: '"[a-zA-Z0-9]"...'
+    Line 19: '"[a-zA-Z]"...'
+    Line 20: '"[0-9]"...'
+    Line 21: '"[a-fA-F0-9]"...'
+    Line 22: 'r"\\s"...'
+    Line 23: '"[^a-zA-Z0-9]"...'
+    Line 24: '"[^a-zA-Z]"...'
+    Line 25: '"[^0-9]"...'
+    Line 26: '"[^a-fA-F0-9]"...'
+
+========================================
+FILE: .\tests\test_anthropic_provider.py
+  Docstrings:
+    Line 38: '"true_positive"...'
+    Line 40: '"Contains prompt injection payload"...'
+    Line 41: '"Implement strict validation schema"...'
+    Line 42: '"high"...'
+    Line 48: '"test"...'
+    Line 48: '"msg"...'
+    Line 77: '"false_positive"...'
+    Line 79: '"Safe mock snippet"...'
+    Line 80: '"None"...'
+    Line 86: '"test"...'
+    Line 102: '"test"...'
+    Line 122: '"true_positive"...'
+    Line 128: '"test"...'
+    Line 156: '"test"...'
+    Line 181: '"test"...'
+
+========================================
+FILE: .\tests\test_cli_url.py
+  Docstrings:
+    Line 65: '"Bearer test"...'
+    Line 65: '"val"...'
+
+========================================
+FILE: .\tests\test_config.py
+  Docstrings:
+    Line 106: '"repo"...'
+    Line 110: '"low"...'
+
+========================================
+FILE: .\tests\test_cors_misconfig.py
+  Docstrings:
+    Line 8: '"*"...'
+    Line 9: '"true"...'
+    Line 30: '"*"...'
+    Line 48: '"https://evil-test-origin.example.com"...'
+    Line 69: '"https://safe-origin.example.com"...'
+
+========================================
+FILE: .\tests\test_gemini_provider.py
+  Docstrings:
+    Line 28: '"false_positive"...'
+    Line 30: '"gem_exp"...'
+    Line 31: '"gem_fix"...'
+    Line 32: '"low"...'
+    Line 38: '"test"...'
+    Line 56: '"test"...'
+    Line 74: '"test"...'
+    Line 95: '"test"...'
+
+========================================
+FILE: .\tests\test_injection_payload_check.py
+  Docstrings:
+    Line 9: '"application/json"...'
+    Line 14: '"test_01"...'
+    Line 15: '"instruction_override"...'
+    Line 16: '"Bypassed normal mode"...'
+    Line 17: '"Ignore rules"...'
+    Line 18: '"LLM01"...'
+    Line 19: '"high"...'
+    Line 20: '"internal"...'
+    Line 50: '"application/json"...'
+    Line 55: '"test_01"...'
+    Line 56: '"instruction_override"...'
+    Line 57: '"Bypassed normal mode"...'
+    Line 58: '"Ignore rules"...'
+    Line 59: '"LLM01"...'
+    Line 60: '"high"...'
+    Line 61: '"internal"...'
+    Line 88: '"application/json"...'
+    Line 93: '"test_01"...'
+    Line 94: '"instruction_override"...'
+    Line 95: '"Bypassed normal mode"...'
+    Line 96: '"Ignore rules"...'
+    Line 97: '"LLM01"...'
+    Line 98: '"high"...'
+    Line 99: '"internal"...'
+    Line 126: '"application/json"...'
+    Line 131: '"test_01"...'
+    Line 132: '"instruction_override"...'
+    Line 133: '"Response contains \'succeeded\'"...'
+    Line 134: '"Ignore rules"...'
+    Line 135: '"LLM01"...'
+    Line 136: '"high"...'
+    Line 137: '"internal"...'
+
+========================================
+FILE: .\tests\test_judge_base.py
+  Docstrings:
+    Line 6: '"test_rule"...'
+    Line 6: '"Test Finding"...'
+
+========================================
+FILE: .\tests\test_judge_cache.py
+  Docstrings:
+    Line 66: '"r"...'
+    Line 66: '"snip"...'
+    Line 66: '"msg"...'
+    Line 87: '"r"...'
+    Line 87: '"snip"...'
+    Line 87: '"msg"...'
+
+========================================
+FILE: .\tests\test_judge_cli_wiring.py
+  Docstrings:
+    Line 15: '"openai"...'
+    Line 16: '"gpt-4"...'
+    Line 17: '"OPENAI_API_KEY"...'
+    Line 24: '"none"...'
+    Line 31: '"openai"...'
+    Line 32: '"gpt-4"...'
+    Line 33: '"OPENAI_API_KEY"...'
+    Line 36: '"anthropic"...'
+    Line 44: '"openai"...'
+    Line 45: '"gpt-4"...'
+    Line 46: '"OPENAI_API_KEY"...'
+    Line 60: '"test"...'
+    Line 60: '"sk-12345678901234567890"...'
+    Line 70: '"openai"...'
+    Line 71: '"gpt-4"...'
+    Line 72: '"OPENAI_API_KEY"...'
+    Line 77: '"openai"...'
+    Line 109: '"true_positive"...'
+    Line 111: '"exp"...'
+    Line 112: '"fix"...'
+    Line 126: '"test_rule"...'
+    Line 127: '"Context information with secret: sk-1234567890123...'
+    Line 128: '"secret = \'sk-12345678901234567890\'\\n# This is a c...'
+
+========================================
+FILE: .\tests\test_judge_providers_parity.py
+  Docstrings:
+    Line 59: '"true_positive"...'
+    Line 61: '"explanation"...'
+    Line 62: '"fix"...'
+    Line 63: '"high"...'
+    Line 67: '"r"...'
+    Line 80: '"false_positive"...'
+    Line 82: '"exp"...'
+    Line 83: '"fix2"...'
+    Line 84: '"low"...'
+    Line 88: '"r"...'
+    Line 99: '"needs_human_review"...'
+    Line 101: '"exp3"...'
+    Line 102: '"fix3"...'
+    Line 103: '"medium"...'
+    Line 109: '"r"...'
+    Line 125: '"true_positive"...'
+    Line 127: '"exp4"...'
+    Line 128: '"fix4"...'
+    Line 129: '"unset"...'
+    Line 133: '"r"...'
+
+========================================
+FILE: .\tests\test_local_provider.py
+  Docstrings:
+    Line 56: '"true_positive"...'
+    Line 58: '"local_exp"...'
+    Line 59: '"local_fix"...'
+    Line 60: '"critical"...'
+    Line 65: '"test"...'
+    Line 90: '"needs_human_review"...'
+    Line 92: '"local_exp_no_cred"...'
+    Line 93: '"local_fix_no_cred"...'
+    Line 98: '"test"...'
+
+========================================
+FILE: .\tests\test_mutations.py
+  Docstrings:
+    Line 58: '"seed_01"...'
+    Line 59: '"instruction_override"...'
+    Line 60: '"bypass guidelines"...'
+    Line 61: '"Ignore everything"...'
+    Line 62: '"LLM01"...'
+    Line 63: '"high"...'
+    Line 64: '"owasp"...'
+    Line 101: '"seed_01"...'
+    Line 102: '"instruction_override"...'
+    Line 103: '"bypass guidelines"...'
+    Line 104: '"Ignore everything"...'
+    Line 105: '"LLM01"...'
+    Line 106: '"high"...'
+    Line 107: '"owasp"...'
+    Line 130: '"seed_a"...'
+    Line 131: '"instruction_override"...'
+    Line 132: '"intent a"...'
+    Line 133: '"payload a"...'
+    Line 134: '"LLM01"...'
+    Line 135: '"high"...'
+    Line 136: '"src"...'
+    Line 139: '"seed_b"...'
+    Line 140: '"role_play_bypass"...'
+    Line 141: '"intent b"...'
+    Line 142: '"payload b"...'
+    Line 143: '"LLM01"...'
+    Line 144: '"medium"...'
+    Line 145: '"src"...'
+    Line 152: 'f"translated {text}"...'
+
+========================================
+FILE: .\tests\test_openai_provider.py
+  Docstrings:
+    Line 55: '"true_positive"...'
+    Line 57: '"expos"...'
+    Line 58: '"fixos"...'
+    Line 59: '"medium"...'
+    Line 64: '"test"...'
+    Line 78: '"test"...'
+    Line 93: '"true_positive"...'
+    Line 98: '"test"...'
+    Line 119: '"test"...'
+
+========================================
+FILE: .\tests\test_osv_client.py
+  Docstrings:
+    Line 31: '"CVE-2023-36095"...'
+    Line 32: '"RCE in langchain"...'
+    Line 33: '"CVSS_V3"...'
+    Line 33: '"9.8"...'
+    Line 36: '"langchain"...'
+    Line 36: '"PyPI"...'
+    Line 38: '"ECOSYSTEM"...'
+    Line 38: '"0"...'
+    Line 38: '"0.0.236"...'
+    Line 73: '"CVE-2023-36095"...'
+    Line 73: '"RCE"...'
+    Line 87: '"CVE-2023-36095"...'
+    Line 87: '"RCE"...'
+
+========================================
+FILE: .\tests\test_pii_leak_check.py
+  Docstrings:
+    Line 8: '"application/json"...'
+    Line 31: '"application/json"...'
+    Line 46: '"text/event-stream"...'
+    Line 69: '"application/json"...'
+
+========================================
+FILE: .\tests\test_plugins.py
+  Docstrings:
+    Line 154: '"CVE-2023-36095"...'
+    Line 154: '"RCE via PALChain"...'
+    Line 154: '"CVSS_V3"...'
+    Line 154: '"9.8"...'
+    Line 188: '"VULN-A"...'
+    Line 188: '"RCE in package"...'
+    Line 188: '"CVSS_V3"...'
+    Line 188: '"8.0"...'
+    Line 191: '"VULN-B"...'
+    Line 191: '"some generic bug"...'
+    Line 191: '"CVSS_V3"...'
+    Line 191: '"5.0"...'
+
+========================================
+FILE: .\tests\test_rate_limit_check.py
+  Docstrings:
+    Line 41: '"0"...'
+
+========================================
+FILE: .\tests\test_report.py
+  Docstrings:
+    Line 70: '"low"...'
+
+========================================
+FILE: .\tests\test_ssrf_tool_check.py
+  Docstrings:
+    Line 8: '"application/json"...'
+    Line 25: '"application/json"...'
+    Line 40: '"text/event-stream"...'
+    Line 57: '"application/json"...'
