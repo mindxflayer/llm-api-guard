@@ -41,5 +41,6 @@ def redact_finding(finding: Finding) -> Finding:
         suppressed=finding.suppressed,
         owasp_ref=finding.owasp_ref,
         priority=finding.priority,
-        detection_method=getattr(finding, "detection_method", "regex")
+        detection_method=getattr(finding, "detection_method", "regex"),
+        confidence=getattr(finding, "confidence", 0)
     )

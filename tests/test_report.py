@@ -121,3 +121,50 @@ def test_write_sarif_report():
     finally:
         os.remove(path)
 
+def test_report_sorting_severity_and_confidence():
+    from scanner.report import write_json_report, write_html_report, write_sarif_report
+    findings = [
+        Finding("r1", "low", "m1", "l1", confidence=90),
+        Finding("r2", "critical", "m2", "l2", confidence=50),
+        Finding("r3", "high", "m3", "l3", confidence=95),
+        Finding("r4", "high", "m4", "l4", confidence=40),
+        Finding("r5", "critical", "m5", "l5", confidence=85)
+    ]
+    fd, path = tempfile.mkstemp(suffix=".json")
+    try:
+        os.close(fd)
+        write_json_report(findings, path)
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        rules = [f["rule"] for f in data["findings"]]
+        assert rules == ["r5", "r2", "r3", "r4", "r1"]
+    finally:
+        os.remove(path)
+
+    fd, path = tempfile.mkstemp(suffix=".html")
+    try:
+        os.close(fd)
+        write_html_report(findings, path)
+        with open(path, "r", encoding="utf-8") as f:
+            html = f.read()
+        i_r5 = html.find("r5")
+        i_r2 = html.find("r2")
+        i_r3 = html.find("r3")
+        i_r4 = html.find("r4")
+        i_r1 = html.find("r1")
+        assert i_r5 < i_r2 < i_r3 < i_r4 < i_r1
+    finally:
+        os.remove(path)
+
+    fd, path = tempfile.mkstemp(suffix=".sarif")
+    try:
+        os.close(fd)
+        write_sarif_report(findings, path)
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        rules = [r["ruleId"] for r in data["runs"][0]["results"]]
+        assert rules == ["r5", "r2", "r3", "r4", "r1"]
+    finally:
+        os.remove(path)
+
+

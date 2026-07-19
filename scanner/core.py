@@ -19,6 +19,7 @@ class Finding:
     owasp_ref: str = ""
     priority: str = "normal"
     detection_method: str = "regex"
+    confidence: int = 0
 
 @dataclass
 class LiveTarget:
@@ -190,9 +191,29 @@ class Runner:
                 if findings:
                     from scanner.redact import redact_finding
                     from scanner.baseline import check_inline_suppression
+                    
+                    conf_defaults = {}
+                    if self.config:
+                        conf_defaults = self.config.get("confidence_defaults", {})
+                    if not conf_defaults:
+                        conf_defaults = {
+                            "regex": 90,
+                            "entropy": 55,
+                            "ruleset": 85,
+                            "llm_judge": 0,
+                            "static_heuristic": 60
+                        }
+
                     for f in findings:
                         if not getattr(f, "owasp_ref", ""):
                             f.owasp_ref = getattr(plugin_instance, "owasp_ref", "")
+                        
+                        if getattr(f, "confidence", 0) == 0:
+                            method = getattr(f, "detection_method", "regex")
+                            if method == "regex" and plugin_name != "hardcoded_keys":
+                                method = "static_heuristic"
+                            f.confidence = conf_defaults.get(method, conf_defaults.get("static_heuristic", 60))
+                        
                         if check_inline_suppression(f, target):
                             f.suppressed = True
                         all_findings.append(redact_finding(f))
@@ -200,6 +221,9 @@ class Runner:
                 name = getattr(plugin_instance or plugin_item, "name", str(plugin_item))
                 logger.exception(f"Plugin {name} failed with an unhandled exception: {e}")
         
+        from scanner.dedup import deduplicate_findings
+        all_findings = deduplicate_findings(all_findings)
+
         if self.config and "severity_threshold" in self.config:
             all_findings = filter_findings_by_severity(all_findings, self.config["severity_threshold"])
 

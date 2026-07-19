@@ -84,7 +84,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 </html>
 """
 
+def sort_findings(findings: list[Finding]) -> list[Finding]:
+    severity_order = {"critical": 4, "high": 3, "medium": 2, "low": 1}
+    return sorted(findings, key=lambda f: (severity_order.get((f.severity or "").lower(), 0), getattr(f, "confidence", 0)), reverse=True)
+
 def write_json_report(findings: list[Finding], output_path: str) -> None:
+    findings = sort_findings(findings)
     summary = {
         "total": len(findings),
         "critical": 0,
@@ -108,6 +113,7 @@ def write_json_report(findings: list[Finding], output_path: str) -> None:
 
 def write_html_report(findings: list[Finding], output_path: str, baseline_used: bool = False, baselined_count: int = 0) -> None:
     from jinja2 import Template
+    findings = sort_findings(findings)
     
     total_count = len(findings)
     severities = {"critical": 0, "high": 0, "medium": 0, "low": 0}
@@ -142,6 +148,7 @@ def write_html_report(findings: list[Finding], output_path: str, baseline_used: 
         f.write(rendered)
 
 def write_sarif_report(findings: list[Finding], output_path: str, tool_version: str = "0.1.0") -> None:
+    findings = sort_findings(findings)
     rules = {}
     for f in findings:
         rule_id = f.rule

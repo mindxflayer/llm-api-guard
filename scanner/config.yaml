@@ -30,3 +30,11 @@ judge:
   base_url: null
   timeout_seconds: 30
   max_retries: 2
+
+confidence_defaults:
+  regex: 90
+  entropy: 55
+  ruleset: 85
+  llm_judge: 0
+  static_heuristic: 60
+
