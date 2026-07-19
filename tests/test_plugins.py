@@ -347,6 +347,166 @@ def read_file(filepath):
     finally:
         shutil.rmtree(temp_dir)
 
+def test_prompt_injection_flow_3_file_hop():
+    from scanner.static.prompt_injection_flow import PromptInjectionFlow
+    plugin = PromptInjectionFlow()
+    temp_dir = tempfile.mkdtemp()
+    try:
+        os.makedirs(os.path.join(temp_dir, "app"), exist_ok=True)
+        file1 = """
+from flask import Flask, request
+from .file2 import first_helper
+
+app = Flask(__name__)
+
+@app.post("/chat")
+def chat_handler():
+    user_input = request.json["text"]
+    return first_helper(user_input)
+"""
+        file2 = """
+from .file3 import second_helper
+def first_helper(data):
+    return second_helper(data)
+"""
+        file3 = """
+def second_helper(payload):
+    prompt = f"System prompt: {payload}"
+    return llm_call(prompt)
+
+def llm_call(text):
+    return text
+"""
+        with open(os.path.join(temp_dir, "app", "file1.py"), "w", encoding="utf-8") as f:
+            f.write(file1)
+        with open(os.path.join(temp_dir, "app", "file2.py"), "w", encoding="utf-8") as f:
+            f.write(file2)
+        with open(os.path.join(temp_dir, "app", "file3.py"), "w", encoding="utf-8") as f:
+            f.write(file3)
+
+        findings = plugin.run(temp_dir)
+        assert len(findings) >= 1
+        assert any(f.rule == "prompt_injection_flow" for f in findings)
+    finally:
+        shutil.rmtree(temp_dir)
+
+def test_prompt_injection_flow_decorator_resolution():
+    from scanner.static.prompt_injection_flow import PromptInjectionFlow
+    plugin = PromptInjectionFlow()
+    temp_dir = tempfile.mkdtemp()
+    try:
+        os.makedirs(os.path.join(temp_dir, "app"), exist_ok=True)
+        framework = """
+class Flask:
+    def post(self, route):
+        def decorator(f):
+            return f
+        return decorator
+"""
+        app_file = """
+from .framework import Flask
+app = Flask()
+"""
+        handler = """
+from .app_file import app
+@app.post("/chat")
+def chat_handler(request):
+    user_input = request
+    prompt = f"User message: {user_input}"
+    return llm_generate(prompt)
+
+def llm_generate(text):
+    return text
+"""
+        with open(os.path.join(temp_dir, "app", "framework.py"), "w", encoding="utf-8") as f:
+            f.write(framework)
+        with open(os.path.join(temp_dir, "app", "app_file.py"), "w", encoding="utf-8") as f:
+            f.write(app_file)
+        with open(os.path.join(temp_dir, "app", "handler.py"), "w", encoding="utf-8") as f:
+            f.write(handler)
+
+        findings = plugin.run(temp_dir)
+        assert len(findings) >= 1
+    finally:
+        shutil.rmtree(temp_dir)
+
+def test_prompt_injection_flow_fallback_warning():
+    from scanner.static.prompt_injection_flow import PromptInjectionFlow
+    plugin = PromptInjectionFlow()
+    temp_dir = tempfile.mkdtemp()
+    try:
+        code = """
+def route(func):
+    return func
+
+@route
+def chat_handler(request):
+    user_input = request
+    prompt = f"User message: {user_input}"
+    return llm_generate(prompt)
+
+def llm_generate(text):
+    return text
+"""
+        with open(os.path.join(temp_dir, "bad.py"), "w", encoding="utf-8") as f:
+            f.write(code)
+        
+        import sys
+        from io import StringIO
+        old_stdout = sys.stdout
+        sys.stdout = StringIO()
+        try:
+            findings = plugin.run(temp_dir)
+            captured = sys.stdout.getvalue()
+        finally:
+            sys.stdout = old_stdout
+
+        assert "handler detection fell back to name-matching for chat_handler" in captured
+        assert len(findings) >= 1
+    finally:
+        shutil.rmtree(temp_dir)
+
+def test_prompt_injection_flow_deep_hop_limit():
+    from scanner.static.prompt_injection_flow import PromptInjectionFlow
+    plugin = PromptInjectionFlow()
+    temp_dir = tempfile.mkdtemp()
+    try:
+        code = """
+def h1(request):
+    h2(request)
+
+def h2(x): h3(x)
+def h3(x): h4(x)
+def h4(x): h5(x)
+def h5(x): h6(x)
+def h6(x): h7(x)
+def h7(x): h8(x)
+def h8(x): h9(x)
+def h9(x):
+    prompt = f"User message: {x}"
+    return llm_generate(prompt)
+
+def llm_generate(text):
+    return text
+"""
+        with open(os.path.join(temp_dir, "bad.py"), "w", encoding="utf-8") as f:
+            f.write(code)
+
+        import sys
+        from io import StringIO
+        old_stdout = sys.stdout
+        sys.stdout = StringIO()
+        try:
+            findings = plugin.run(temp_dir)
+            captured = sys.stdout.getvalue()
+        finally:
+            sys.stdout = old_stdout
+
+        assert "taint tracking hop limit (8) reached from request" in captured
+    finally:
+        shutil.rmtree(temp_dir)
+
+
 
 
 
