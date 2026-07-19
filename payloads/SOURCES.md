@@ -5,5 +5,14 @@ This document describes the provenance and sources of prompt injection testing p
 ## Existing Entries
 - **Internal**: Generic, widely-published injection patterns authored internally for seed scanning.
 
-## Future Maintained Corpora
-- Pulling from external repositories (e.g., `garak`, `PromptInject`, `JailbreakBench`) is planned for a future update and is not yet implemented. Future updates will document the specific pinned source commit hashes here.
+## External Maintained Corpora
+- **Garak (v0.15.1)**: Imported from Garak probes for jailbreak and instruction override tests.
+  Used Probe Classes:
+  - `garak.probes.dan.Dan_11_0`
+  - `garak.probes.dan.STAN`
+  - `garak.probes.dan.DUDE`
+  - `garak.probes.dan.AntiDAN`
+  - `garak.probes.dan.ChatGPT_Developer_Mode_v2`
+  - `garak.probes.promptinject.HijackHateHumans`
+  - `garak.probes.promptinject.HijackKillHumans`
+  - `garak.probes.promptinject.HijackLongPrompt`
