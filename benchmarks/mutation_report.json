@@ -1,0 +1,44 @@
+{
+  "summary": {
+    "total_rules": 1,
+    "total_mutants": 5,
+    "total_killed": 2,
+    "total_survived": 3,
+    "overall_kill_rate": 40.0
+  },
+  "rules": {
+    "prompt_injection_flow": {
+      "kill_rate": 40.0,
+      "total_mutants": 5,
+      "killed": 2,
+      "survived": 3,
+      "techniques": {
+        "rename_identifiers": {
+          "status": "survived",
+          "killed": 0,
+          "survived": 1
+        },
+        "extract_to_helper": {
+          "status": "killed",
+          "killed": 1,
+          "survived": 0
+        },
+        "convert_dict_access_style": {
+          "status": "killed",
+          "killed": 1,
+          "survived": 0
+        },
+        "wrap_in_try_except": {
+          "status": "survived",
+          "killed": 0,
+          "survived": 1
+        },
+        "change_string_formatting_style": {
+          "status": "survived",
+          "killed": 0,
+          "survived": 1
+        }
+      }
+    }
+  }
+}
