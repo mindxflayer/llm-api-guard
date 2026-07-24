@@ -17,6 +17,9 @@ live_checks:
   pii_leak_check: false
   ssrf_tool_check: false
   indirect_injection_probe: false
+  multiturn_probe: false
+multiturn:
+  max_turns: 5
 indirect_injection:
   fixtures: []
 severity_threshold: medium
