@@ -1,0 +1,12 @@
+# Schema for benchmarks/repos.yaml
+# repos:
+#   - name: string (unique repository identifier)
+#     url: string (git clone URL or local directory path)
+#     commit: string (pinned commit hash for reproducibility)
+#     notes: string (rationale for inclusion in benchmark)
+
+repos:
+  - name: placeholder_repo
+    url: "PLACEHOLDER - replace with real repos"
+    commit: "0000000000000000000000000000000000000000"
+    notes: "PLACEHOLDER - replace with real repos"
